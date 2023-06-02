@@ -1,3 +1,7 @@
+# Set an environment variable with the build version and project name
+ENV VERSION=0.1
+ENV NAME=purrs
+
 # Use an official Python runtime as a parent image
 FROM python:3.9-slim
 
