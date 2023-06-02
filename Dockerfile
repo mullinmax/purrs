@@ -8,6 +8,9 @@ ENV NAME=purrs
 # Set the working directory in the container to /app
 WORKDIR /app
 
+# Add the current directory contents into the container at /app
+ADD . /app
+
 # Set the Python path to include /app so it includes src and tests
 ENV PYTHONPATH=/app
 
