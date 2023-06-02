@@ -1,13 +1,13 @@
 # Purrs
 
-Purrs fetches the RSS feeds from various sources, sorts and categorizes them, and rebroadcasts them as new RSS feeds.
+Purrs fetches the RSS feeds from various sources, sorts and categorizes them, and makes them viewable in a web ui.
 
-## Installation
+## Building the Docker image
 
-Use the package manager [pip](https://pip.pypa.io/en/stable/) to install Purrs.
+To build the Docker image, run:s.
 
 ```bash
-pip install purrs
+docker build -t purrs .
 ```
 
 ## TODO (roughly in order)
