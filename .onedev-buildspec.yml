@@ -1,4 +1,4 @@
-version: 19
+version: 21
 jobs:
 - name: Pull Request Review
   jobExecutor: docker-executor
@@ -37,10 +37,6 @@ jobs:
     templateName: Push Docker Container to Dockerhub
     condition: ALL_PREVIOUS_STEPS_WERE_SUCCESSFUL
   - !UseTemplateStep
-    name: Publish Package on PyPI
-    templateName: Publish Package on Pypi
-    condition: ALL_PREVIOUS_STEPS_WERE_SUCCESSFUL
-  - !UseTemplateStep
     name: Sync master to Github
     templateName: Sync to GitHub
     condition: ALL_PREVIOUS_STEPS_WERE_SUCCESSFUL
@@ -66,17 +62,22 @@ stepTemplates:
     image: python:3.11
     interpreter: !DefaultInterpreter
       commands:
-      - PACKAGE_VERSION="$(python setup.py --version)"
+      - PACKAGE_VERSION="$(grep "BUILD_VERSION" Dockerfile | cut -d '=' -f 2)"
       - BUILD_NUMBER="@build_number@"
       - CURRENT_BRANCH=$(git branch --show-current)
       - ''
-      - if [ "$CURRENT_BRANCH" != "master" ]; then
-      - "\texport BUILD_VERSION=\"${PACKAGE_VERSION}${CURRENT_BRANCH}.dev${BUILD_NUMBER}\""
+      - if [ -z "$PACKAGE_VERSION" ]; then
+      - '    echo "Error: Failed to extract PACKAGE_VERSION from Dockerfile"'
+      - '    exit 1'
+      - fi
+      - ''
+      - if [ "$CURRENT_BRANCH" != "master" ] && [ "$CURRENT_BRANCH" != "main" ]; then
+      - "\texport BUILD_VERSION=\"${PACKAGE_VERSION}.${CURRENT_BRANCH}.dev${BUILD_NUMBER}\""
       - "  \techo \"$BUILD_VERSION\" > BUILD_VERSION"
       - "\techo \"$BUILD_NUMBER\""
       - "\techo \"$BUILD_VERSION\""
       - else
-      - export BUILD_VERSION="${PACKAGE_VERSION}"
+      - "\texport BUILD_VERSION=\"${PACKAGE_VERSION}\""
       - "  \techo \"$BUILD_VERSION\" > BUILD_VERSION"
       - "\techo \"$BUILD_VERSION\""
       - fi
@@ -132,20 +133,6 @@ stepTemplates:
       - docker push --all-tags $dockerhub_user/@project_name@
     useTTY: false
     condition: ALL_PREVIOUS_STEPS_WERE_SUCCESSFUL
-- name: Publish Package on Pypi
-  steps:
-  - !CommandStep
-    name: Publish to PyPI
-    runInContainer: true
-    image: python:3.11
-    interpreter: !DefaultInterpreter
-      commands:
-      - pip install setuptools wheel twine
-      - python setup.py sdist bdist_wheel
-      - '# wrapped in quotes to prevent issues with $ in passwords'
-      - twine upload dist/* -u @secret:pypi_user@ -p '@secret:pypi_password@'
-    useTTY: false
-    condition: ALL_PREVIOUS_STEPS_WERE_SUCCESSFUL
 - name: Sync to GitHub
   steps:
   - !CommandStep
@@ -166,6 +153,5 @@ stepTemplates:
     name: Sync to Github
     remoteUrl: https://github.com/@secret:github_user@/@file:PROJECT_NAME@.git
     passwordSecret: github_token
-    withLfs: true
     force: true
     condition: ALL_PREVIOUS_STEPS_WERE_SUCCESSFUL
