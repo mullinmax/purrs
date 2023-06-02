@@ -42,7 +42,7 @@ jobs:
     condition: ALL_PREVIOUS_STEPS_WERE_SUCCESSFUL
   triggers:
   - !BranchUpdateTrigger
-    branches: master dev
+    branches: master dev main
   retryCondition: never
   maxRetries: 3
   retryDelay: 30
@@ -62,7 +62,7 @@ stepTemplates:
     image: python:3.11
     interpreter: !DefaultInterpreter
       commands:
-      - PACKAGE_VERSION="$(grep "BUILD_VERSION" Dockerfile | cut -d '=' -f 2)"
+      - PACKAGE_VERSION="$(grep "VERSION" Dockerfile | cut -d '=' -f 2)"
       - BUILD_NUMBER="@build_number@"
       - CURRENT_BRANCH=$(git branch --show-current)
       - ''
@@ -89,7 +89,7 @@ stepTemplates:
     image: python:3.11
     interpreter: !DefaultInterpreter
       commands:
-      - python setup.py --name > PROJECT_NAME
+      - grep "NAME" Dockerfile | cut -d '=' -f 2 > PROJECT_NAME
     useTTY: false
     condition: ALL_PREVIOUS_STEPS_WERE_SUCCESSFUL
   - !SetBuildVersionStep
