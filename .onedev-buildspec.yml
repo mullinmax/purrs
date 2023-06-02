@@ -42,7 +42,7 @@ jobs:
     condition: ALL_PREVIOUS_STEPS_WERE_SUCCESSFUL
   triggers:
   - !BranchUpdateTrigger
-    branches: master dev
+    branches: master dev main
   retryCondition: never
   maxRetries: 3
   retryDelay: 30
