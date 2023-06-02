@@ -104,7 +104,7 @@ stepTemplates:
     image: python:3.11
     interpreter: !DefaultInterpreter
       commands:
-      - pip install -e .[test]
+      - pip install -r requirements.txt
       - pytest
       - ruff check . --fix
     useTTY: false
