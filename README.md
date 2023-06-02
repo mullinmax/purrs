@@ -12,6 +12,7 @@ docker build -t purrs .
 
 ## TODO (roughly in order)
 
+1. setup build pipeline
 1. ingest data from > 1 subreddit
 1. setup db schema
 1. save data into sqlite
