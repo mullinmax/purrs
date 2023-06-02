@@ -3,7 +3,7 @@ ENV VERSION=0.1
 ENV NAME=purrs
 
 # Use an official Python runtime as a parent image
-FROM python:3.9-slim
+FROM python:3.11-slim
 
 # Set the working directory in the container to /app
 WORKDIR /app
@@ -15,4 +15,4 @@ ADD . /app
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Run the script when the container launches
-CMD python -m src.reddit_rss
+CMD pytest && python -m src.reddit_rss
