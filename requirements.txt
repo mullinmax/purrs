@@ -1,0 +1,4 @@
+feedparser==5.2.1
+feedgenerator==1.9
+pytest==6.2.4
+ruff 
