@@ -8,8 +8,8 @@ ENV NAME=purrs
 # Set the working directory in the container to /app
 WORKDIR /app
 
-# Set the Python path to include /app/src and /app/tests
-ENV PYTHONPATH=/app/src:/app/tests
+# Set the Python path to include /app so it includes src and tests
+ENV PYTHONPATH=/app
 
 # Install any needed packages specified in requirements.txt
 RUN pip install --no-cache-dir -r requirements.txt
