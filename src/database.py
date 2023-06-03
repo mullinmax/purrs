@@ -72,8 +72,3 @@ class User(Base):
     hashed_password = Column(String)
     write = Column(Boolean)
     admin = Column(Boolean)
-
-# now you can create the database
-from sqlalchemy import create_engine
-engine = create_engine('sqlite:///purrs.db')
-Base.metadata.create_all(engine)
