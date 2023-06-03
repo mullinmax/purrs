@@ -1,10 +1,32 @@
 # Purrs
 
-Purrs fetches the RSS feeds from various sources, sorts and categorizes them, and makes them viewable in a web ui.
+![GitHub stars](https://img.shields.io/github/stars/mullinmax/purrs)
+![GitHub forks](https://img.shields.io/github/forks/mullinmax/purrs)
+![GitHub issues](https://img.shields.io/github/issues/mullinmax/purrs)
+![GitHub license](https://img.shields.io/github/license/mullinmax/purrs)
 
-## Building the Docker image
+Purrs is a web application that fetches RSS feeds from various sources, sorts and categorizes them, and displays them in a user-friendly web UI.
 
-To build the Docker image, run:s.
+## Motivation
+
+The internet is a vast landscape filled with content from numerous sources. This diversity can be overwhelming, often making it difficult to keep track of the topics and updates that matter most to us. We end up spending precious time sifting through repeated or irrelevant information, or worse, missing out on important content.
+
+Purrs aims to solve this problem. It's a tool designed to bring together RSS feeds from your chosen internet sources into one consolidated view, eliminating the hassle of visiting multiple sites or platforms.
+
+However, we understand that not every post from a source is equally interesting to you. That's why Purrs leverages Machine Learning techniques to sort through these posts, highlighting the ones that align best with your interests.
+
+In essence, Purrs is about optimizing your online content consumption by ensuring you see the content you care about, and not the content you've already read or don't find interesting.
+
+## Features
+
+- Ingests data from multiple RSS feed sources
+- Makes feed items viewable in a Web UI
+- Sorts and categorizes feed items using machine learning
+- Enables liking/disliking to train model over time
+
+## Building the Docker Image
+
+To build the Docker image, run the following command:
 
 ```bash
 docker build -t purrs .
@@ -12,21 +34,21 @@ docker build -t purrs .
 
 ## TODO (roughly in order)
 
-1. setup build pipeline
-1. ingest data from > 1 subreddit
-1. setup db schema
-1. save data into sqlite
-1. basic deduplicate data
-1. web ui display text items
-1. web ui like/dislike buttons write to db
-1. web ui shows more item types
-1. make MD representations of items
-1. embed all test representations and save to db
-1. model training?
-1. expand this todo list
+ - [x] setup build pipeline
+ - [x] ingest data from > 1 subreddit
+ - [x] setup db schema
+ - [ ] save data into sqlite
+ - [ ] basic deduplicate data
+ - [ ] web ui display text items
+ - [ ] web ui like/dislike buttons write to db
+ - [ ] web ui shows more item types
+ - [ ] make MD representations of items
+ - [ ] embed all test representations and save to db
+ - [ ] model training?
+ - [ ] expand this todo list
 
 
-
+## System Design
 <!-- non-mvp material commented out -->
 ```mermaid
 flowchart TD
