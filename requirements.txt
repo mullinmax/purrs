@@ -1,4 +1,5 @@
 feedparser
 feedgenerator
 pytest
-ruff 
+ruff
+sqlalchemy
