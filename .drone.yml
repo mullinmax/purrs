@@ -38,9 +38,8 @@ steps:
   - name: push_docs_to_wiki
     image: alpine/git
     environment:
-      GIT_USER: maxwell
-      GIT_PASSWORD:
-        from_secret: GITEA_PASSWORD
+      SSH_PRIVATE_KEY:
+        from_secret: SSH_PRIVATE_KEY
     commands:
       - git clone --depth 1 --branch master https://gitea.doze.dev/maxwell/purrs.wiki.git
       - cd repository.wiki
