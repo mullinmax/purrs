@@ -1,0 +1,51 @@
+kind: pipeline
+name: run_tests
+
+trigger:
+  event:
+    - pull_request
+
+steps:
+  - name: test
+    pull: if-not-exists
+    image: python:3.11
+    commands:
+      - pip install -r requirements.txt
+      - pip install pytest
+      - pytest tests/
+
+---
+
+kind: pipeline
+name: generate_docs
+
+trigger:
+  event:
+    - push
+  branch:
+    - main
+
+steps:
+  - name: generate_docs
+    pull: if-not-exists
+    image: python:3.11
+    commands:
+      - pip install -r requirements.txt  # Install necessary dependencies for generating docs
+      - pip install pdoc3
+      - cd src  # Move to the directory containing the source files
+      - pdoc --html --output-dir ../docs .  # Generate the Markdown documentation using pdoc3
+
+  - name: push_docs_to_wiki
+    image: alpine/git
+    environment:
+      GIT_USER: maxwell
+      GIT_PASSWORD:
+        from_secret: GITEA_PASSWORD
+    commands:
+      - git clone --depth 1 --branch master https://gitea.doze.dev/maxwell/purrs.wiki.git
+      - cd repository.wiki
+      - rm -rf *
+      - cp -r ../docs/* .
+      - git add .
+      - git commit -m "Update documentation"
+      - git push origin master

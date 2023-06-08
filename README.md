@@ -1,5 +1,8 @@
 # Purrs
 
+<!-- build status -->
+[![Build Status](https://drone.doze.dev/api/badges/maxwell/purrs/status.svg)](https://drone.doze.dev/maxwell/purrs)
+
 <!-- github repo badges -->
 ![GitHub stars](https://img.shields.io/github/stars/mullinmax/purrs)
 ![GitHub forks](https://img.shields.io/github/forks/mullinmax/purrs)

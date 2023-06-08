@@ -1,0 +1,19 @@
+loaders:
+- type: python
+  search_path: ["./src"]
+
+processors:
+- type: filter
+- type: smart
+- type: crossref
+
+renderer:
+  type: markdown
+  output:
+    filename: "./docs/README.md"
+
+hooks:
+  pre-render:
+  - echo "Starting Documentation Generation"
+  post-render:
+  - echo "Documentation Generation Complete"
