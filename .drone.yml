@@ -29,7 +29,7 @@ steps:
       - mkdir -p ~/.ssh
       - chmod 700 ~/.ssh
       - ssh-keyscan -H gitea.doze.dev >> ~/.ssh/known_hosts
-      - git clone --depth 1 --branch master git@gitea.doze.dev:path/to/your/repository.wiki.git docs
+      - git clone --depth 1 --branch master git@gitea.doze.dev:maxwell/purrs.wiki.git docs
       - cd docs
       - git config user.name "Drone CI"
       - git config user.email "drone@ci.com"
