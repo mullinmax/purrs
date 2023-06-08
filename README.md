@@ -182,4 +182,4 @@ erDiagram
     item ||--|| vector : describes
     item ||--|| item_score : ranks
     item_score ||--|| model : produces
-```
+``` 
