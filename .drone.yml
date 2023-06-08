@@ -28,8 +28,8 @@ steps:
       - echo "$SSH_PRIVATE_KEY" | ssh-add -
       - mkdir -p ~/.ssh
       - chmod 700 ~/.ssh
-      - ssh-keyscan -H <your_gitea_instance> >> ~/.ssh/known_hosts
-      - git clone --depth 1 --branch master git@<your_gitea_instance>:path/to/your/repository.wiki.git docs
+      - ssh-keyscan -H gitea.doze.dev >> ~/.ssh/known_hosts
+      - git clone --depth 1 --branch master git@gitea.doze.dev:path/to/your/repository.wiki.git docs
       - cd docs
       - git config user.name "Drone CI"
       - git config user.email "drone@ci.com"
