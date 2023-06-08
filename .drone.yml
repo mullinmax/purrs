@@ -1,22 +1,4 @@
 kind: pipeline
-name: run_tests
-
-trigger:
-  event:
-    - pull_request
-
-steps:
-  - name: test
-    pull: if-not-exists
-    image: python:3.11
-    commands:
-      - pip install -r requirements.txt
-      - pip install pytest
-      - pytest tests/
-
----
-
-kind: pipeline
 name: generate_docs
 
 trigger:
@@ -39,10 +21,18 @@ steps:
     image: alpine/git
     environment:
       SSH_PRIVATE_KEY:
-        from_secret: SSH_PRIVATE_KEY
+        from_secret: GITEA_SSH_PRIVATE_KEY
     commands:
-      - git clone --depth 1 --branch master https://gitea.doze.dev/maxwell/purrs.wiki.git
-      - cd repository.wiki
+      - apk add --no-cache openssh-client
+      - eval $(ssh-agent -s)
+      - echo "$SSH_PRIVATE_KEY" | ssh-add -
+      - mkdir -p ~/.ssh
+      - chmod 700 ~/.ssh
+      - ssh-keyscan -H <your_gitea_instance> >> ~/.ssh/known_hosts
+      - git clone --depth 1 --branch master git@<your_gitea_instance>:path/to/your/repository.wiki.git docs
+      - cd docs
+      - git config user.name "Drone CI"
+      - git config user.email "drone@ci.com"
       - rm -rf *
       - cp -r ../docs/* .
       - git add .
