@@ -16,7 +16,6 @@ steps:
     - pip install pydoc-markdown
     - pip install -r requirements.txt
     - python generate_docs.py
-    - mv report.md docs/tests_report.md
     - git add docs/*
     - git commit -m "Update documentation" -a || echo "No changes to commit"
 
@@ -27,7 +26,8 @@ steps:
       path: /shared
   commands:
     - CHANGED_FILES=$(git diff --name-only HEAD~1 HEAD)
-    - if echo "${CHANGED_FILES}" | grep -q "tests/.*\.py"; then
+    - |
+      if echo "${CHANGED_FILES}" | grep -q "tests/.*\.py"; then
         pip install pytest-md
         pip install -r requirements.txt
         pytest --md report.md
@@ -38,6 +38,8 @@ steps:
 
 - name: build docker container
   image: plugins/docker
+  depends_on:
+    - run tests
   settings:
     context: .
     repo: mullinmax/purrs
@@ -47,7 +49,8 @@ steps:
       from_secret: DOCKER_PASSWORD
   commands:
     - VERSION=$(grep 'ENV VERSION' Dockerfile | cut -d '=' -f 2)
-    - if [ "${DRONE_BRANCH}" = "dev" ]; then
+    - |
+      if [ "${DRONE_BRANCH}" = "dev" ]; then
         VERSION="dev${VERSION}"
       fi
     - docker build -t mullinmax/purrs:$VERSION .
