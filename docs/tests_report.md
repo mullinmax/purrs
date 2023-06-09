@@ -1,6 +1,6 @@
 # Test Report
 
-*Report generated on 09-Jun-2023 at 19:08:49 by [pytest-md]*
+*Report generated on 09-Jun-2023 at 19:09:12 by [pytest-md]*
 
 [pytest-md]: https://github.com/hackebrot/pytest-md
 
