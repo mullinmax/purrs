@@ -28,8 +28,3 @@ sphinx:
 python:
    install:
      - requirements: requirements.txt
-
-# Repository information
-repositories:
-  - url: https://gitea.doze.dev/mullinmax/purrs
-    type: git
