@@ -1,40 +1,36 @@
 kind: pipeline
-name: generate_docs
+type: docker
+name: default
+
+steps:
+- name: generate docs
+  image: python:3.11
+  commands:
+    - pip install pdoc3
+    - pip install -r requirements.txt
+    - pdoc --output-dir docs --force --html src
+    - git add docs/*
+    - git commit -m "Update documentation" -a || echo "No changes to commit"
+- name: push to gitea
+  image: alpine/git
+  environment:
+    SSH_KEY:
+      from_secret: GITEA_SSH_KEY
+  commands:
+    - mkdir /root/.ssh/
+    - 'echo -n "$SSH_KEY" > /root/.ssh/id_rsa'
+    - 'chmod 600 /root/.ssh/id_rsa'
+    - 'ssh-keyscan -p 2222 -t rsa gitea.doze.dev >> /root/.ssh/known_hosts'
+    - git config --global user.email "mullinmax@gmail.com"
+    - git config --global user.name "Maxwell Mullin"
+    - git remote set-url origin ssh://git@gitea.doze.dev:2222/maxwell/purrs.git
+    - git push origin HEAD
 
 trigger:
   event:
+    - pull_request
     - push
   branch:
+    - '*'
+  target:
     - main
-
-steps:
-  - name: generate_docs
-    pull: if-not-exists
-    image: python:3.11
-    commands:
-      - pip install -r requirements.txt  # Install necessary dependencies for generating docs
-      - pip install pdoc3
-      - cd src  # Move to the directory containing the source files
-      - pdoc --html --output-dir ../docs .  # Generate the Markdown documentation using pdoc3
-
-  - name: push_docs_to_wiki
-    image: alpine/git
-    environment:
-      SSH_PRIVATE_KEY:
-        from_secret: GITEA_SSH_PRIVATE_KEY
-    commands:
-      - apk add --no-cache openssh-client
-      - eval $(ssh-agent -s)
-      - echo "$SSH_PRIVATE_KEY" | ssh-add -
-      - mkdir -p ~/.ssh
-      - chmod 700 ~/.ssh
-      - ssh-keyscan -H gitea.doze.dev >> ~/.ssh/known_hosts
-      - git clone --depth 1 --branch master git@gitea.doze.dev:maxwell/purrs.wiki.git docs
-      - cd docs
-      - git config user.name "Drone CI"
-      - git config user.email "drone@ci.com"
-      - rm -rf *
-      - cp -r ../docs/* .
-      - git add .
-      - git commit -m "Update documentation"
-      - git push origin master
