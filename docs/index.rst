@@ -1,16 +1,16 @@
-.. Purrs documentation master file, created by
-   sphinx-quickstart on Thu Jun  8 21:33:32 2023.
-   You can adapt this file completely to your liking, but it should at least
-   contain the root `toctree` directive.
+===================
+Purrs Documentation
+===================
 
-Welcome to Purrs's documentation!
-=================================
+Welcome to the Purrs project! Here you'll find documentation for all of our modules.
 
 .. toctree::
    :maxdepth: 2
    :caption: Contents:
 
-
+   database
+   reddit_rss
+   rss_writer
 
 Indices and tables
 ==================
