@@ -2,17 +2,95 @@ kind: pipeline
 type: docker
 name: default
 
+volumes:
+- name: shared
+  temp: {}
+
 steps:
-- name: generate docs
+- name: generate documentation
   image: python:3.11
+  volumes:
+    - name: shared
+      path: /shared
   commands:
     - pip install pydoc-markdown
     - pip install -r requirements.txt
     - python generate_docs.py
     - git add docs/*
     - git commit -m "Update documentation" -a || echo "No changes to commit"
+
+- name: run tests
+  image: python:3.11
+  volumes:
+    - name: shared
+      path: /shared
+  commands:
+    - CHANGED_FILES=$(git diff --name-only HEAD~1 HEAD)
+    - |
+      if echo "${CHANGED_FILES}" | grep -qE "tests/.*\.py|src/.*\.py"; then
+        pip install pytest-md
+        pip install -r requirements.txt
+        pytest --md report.md
+        mv report.md docs/tests_report.md
+        git add docs/tests_report.md
+        git commit -m "Update test report" -a || echo "No changes to test report"
+      fi
+
+# - name: build docker container
+#   image: gcr.io/kaniko-project/executor:debug
+#   volumes:
+#     - name: docker_config
+#       path: /kaniko/.docker/
+#   depends_on:
+#     - run tests
+#   commands:
+#     - mkdir -p /kaniko/.docker/
+#     - echo "{\"auths\":{\"https://index.docker.io/v1/\":{\"auth\":\"$(echo -n $DOCKER_USERNAME:$DOCKER_PASSWORD | base64)\"}}}" > /kaniko/.docker/config.json
+#     - VERSION=$(grep 'ENV VERSION' Dockerfile | cut -d '=' -f 2)
+#     - |
+#       if [ "${DRONE_BRANCH}" = "dev" ]; then
+#         VERSION="dev${VERSION}"
+#       fi
+#     - /kaniko/executor --context $PWD --dockerfile $PWD/Dockerfile --destination mullinmax/purrs:$VERSION --volume /kaniko/.docker:/kaniko/.docker
+
+- name: build main docker container
+  image: plugins/kaniko
+  depends_on:
+    - run tests
+  settings:
+    username:
+      from_secret: DOCKER_USERNAME
+    password:
+      from_secret: DOCKER_PASSWORD
+    repo: mullinmax/purrs
+    tags: latest
+  when:
+    branch:
+      - main
+
+- name: build dev docker container
+  image: plugins/kaniko
+  depends_on:
+    - run tests
+  settings:
+    username:
+      from_secret: DOCKER_USERNAME
+    password:
+      from_secret: DOCKER_PASSWORD
+    repo: mullinmax/purrs
+    tags: dev${DRONE_BUILD_NUMBER}
+  when:
+    branch:
+      - dev
+
 - name: push to gitea
   image: alpine/git
+  volumes:
+    - name: shared
+      path: /shared
+  depends_on:
+    - generate documentation
+    - run tests
   environment:
     SSH_KEY:
       from_secret: GITEA_SSH_KEY
@@ -29,5 +107,6 @@ steps:
 trigger:
   branch:
     - dev
+    - main
   event:
     - push

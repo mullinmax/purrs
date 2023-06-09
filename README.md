@@ -1,19 +1,11 @@
 # Purrs
 
 <!-- build status -->
-[![Build Status](https://drone.doze.dev/api/badges/maxwell/purrs/status.svg)](https://drone.doze.dev/maxwell/purrs)
-
-<!-- github repo badges -->
-![GitHub stars](https://img.shields.io/github/stars/mullinmax/purrs)
-![GitHub forks](https://img.shields.io/github/forks/mullinmax/purrs)
-![GitHub issues](https://img.shields.io/github/issues/mullinmax/purrs)
-![GitHub license](https://img.shields.io/github/license/mullinmax/purrs)
-
-<!-- docker image badges -->
-![Docker Image Size (latest by date)](https://img.shields.io/docker/image-size/mullinmax/purrs)
-![Docker Pulls](https://img.shields.io/docker/pulls/mullinmax/purrs)
-![Docker Stars](https://img.shields.io/docker/stars/mullinmax/purrs)
-![Docker Version](https://img.shields.io/docker/v/mullinmax/purrs?label=latest&logo=Docker)
+![Drone Build Status](https://shields.doze.dev/drone/build/maxwell/purrs?label=Drone%20Build&logo=drone&server=https%3A%2F%2Fdrone.doze.dev&style=for-the-badge)
+![GitHub license](https://shields.doze.dev/badge/license-MIT-green?style=for-the-badge&logo=unlicense)
+![Docker Image Size](https://shields.doze.dev/docker/image-size/mullinmax/purrs?logo=docker&sort=semver&style=for-the-badge)
+![Docker Pulls](https://shields.doze.dev/docker/pulls/mullinmax/purrs?logo=docker&style=for-the-badge)
+![Docker Version](https://shields.doze.dev/docker/v/mullinmax/purrs?logo=docker&sort=semver&style=for-the-badge)
 
 
 Purrs is a web application that fetches RSS feeds from various sources, sorts and categorizes them, and displays them in a user-friendly web UI.
@@ -39,7 +31,7 @@ In essence, Purrs is about optimizing your online content consumption by ensurin
 
 ## Documentation
 
-Documentation can be found as markdown files in the [purrs/docs](./docs) folder
+Documentation for the modules can be found as markdown files in the [purrs/docs](./docs/index.md) folder.
 
 ## Building the Docker Image
 
