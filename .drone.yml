@@ -2,21 +2,32 @@ kind: pipeline
 type: docker
 name: default
 
+volumes:
+- name: shared
+  temp: {}
+
 steps:
 - name: generate docs
   image: python:3.11
+  volumes:
+    - name: shared
+      path: /shared
   commands:
     - pip install pydoc-markdown
     - pip install -r requirements.txt
     - python generate_docs.py
+    - mv docs /shared/docs
 
 - name: test
   image: python:3.11
+  volumes:
+    - name: shared
+      path: /shared
   commands:
     - pip install -r requirements.txt
     - pip install pytest pytest-md
     - pytest --md report.md
-    - mv report.md docs/tests_report.md
+    - mv report.md /shared/tests_report.md
 
 - name: commit and push
   image: alpine/git
@@ -26,7 +37,12 @@ steps:
   environment:
     SSH_KEY:
       from_secret: GITEA_SSH_KEY
+  volumes:
+    - name: shared
+      path: /shared
   commands:
+    - mv /shared/docs docs
+    - mv /shared/tests_report.md docs/tests_report.md
     - git add docs/*
     - git commit -m "Update documentation and test report" -a || echo "No changes to commit"
     - mkdir /root/.ssh/
