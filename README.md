@@ -16,9 +16,6 @@
 ![Docker Version](https://img.shields.io/docker/v/mullinmax/purrs?label=latest&logo=Docker)
 
 
-
-
-
 Purrs is a web application that fetches RSS feeds from various sources, sorts and categorizes them, and displays them in a user-friendly web UI.
 
 > **Note:** Purrs is currently in alpha. It may contain bugs and potentially lack some features. Your patience and feedback are appreciated as we improve the software.
