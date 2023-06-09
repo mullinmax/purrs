@@ -53,7 +53,7 @@ steps:
 #       fi
 #     - /kaniko/executor --context $PWD --dockerfile $PWD/Dockerfile --destination mullinmax/purrs:$VERSION --volume /kaniko/.docker:/kaniko/.docker
 
-- name: build docker container
+- name: build main docker container
   image: plugins/kaniko
   depends_on:
     - run tests
@@ -68,7 +68,7 @@ steps:
     branch:
       - main
 
-- name: build docker container
+- name: build dev docker container
   image: plugins/kaniko
   depends_on:
     - run tests
