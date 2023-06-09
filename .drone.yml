@@ -8,7 +8,8 @@ steps:
   commands:
     - pip install pydoc-markdown
     - pip install -r requirements.txt
-    - pydoc-markdown -I src -O docs
+    - mkdir -p docs
+    - find src -name "*.py" -not -name "__init__.py" | while read file; do pydoc-markdown -I src -m "${file%.*}" --render-toc > "docs/$(basename "${file%.*}").md"; done
     - git add docs/*
     - git commit -m "Update documentation" -a || echo "No changes to commit"
 - name: push to gitea
