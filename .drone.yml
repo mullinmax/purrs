@@ -58,7 +58,7 @@ steps:
   depends_on:
     - run tests
   settings:
-    username: mullinmax
+    username:
       from_secret: DOCKER_USERNAME
     password:
       from_secret: DOCKER_PASSWORD
