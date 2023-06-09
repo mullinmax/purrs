@@ -68,6 +68,20 @@ steps:
     branch:
       - main
 
+- name: build docker container
+  image: plugins/kaniko
+  depends_on:
+    - run tests
+  settings:
+    username:
+      from_secret: DOCKER_USERNAME
+    password:
+      from_secret: DOCKER_PASSWORD
+    repo: mullinmax/purrs
+    tags: dev${BUILD_NUMBER}
+  when:
+    branch:
+      - dev
 
 - name: push to gitea
   image: alpine/git
