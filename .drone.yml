@@ -9,12 +9,12 @@ volumes:
 steps:
 - name: get version
   image: alpine
+  volumes:
+    - name: shared
+      path: /shared
   commands:
     - version=$(grep 'ENV VERSION' Dockerfile | cut -d '=' -f2)
     - echo $version > .version
-  volumes:
-    - name: shared
-      path: /drone/src
 
 - name: generate documentation
   image: python:3.11
@@ -47,6 +47,9 @@ steps:
 
 - name: build main docker container
   image: plugins/kaniko
+  volumes:
+    - name: shared
+      path: /shared
   depends_on:
     - run tests
     - get version
@@ -59,9 +62,6 @@ steps:
     tags: 
       - latest
       - from_file: .version
-  volumes:
-    - name: shared
-      path: /drone/src  
   when:
     branch:
       - main
