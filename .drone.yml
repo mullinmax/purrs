@@ -27,7 +27,7 @@ steps:
   commands:
     - CHANGED_FILES=$(git diff --name-only HEAD~1 HEAD)
     - |
-      if echo "${CHANGED_FILES}" | grep -q "tests/.*\.py"; then
+      if echo "${CHANGED_FILES}" | grep -qE "tests/.*\.py|src/.*\.py"; then
         pip install pytest-md
         pip install -r requirements.txt
         pytest --md report.md
@@ -37,24 +37,34 @@ steps:
       fi
 
 - name: build docker container
-  image: plugins/docker
+  image: docker:dind
+  privileged: true
+  volumes:
+    - name: docker_socket
+      path: /var/run
   depends_on:
     - run tests
-  settings:
-    context: .
-    repo: mullinmax/purrs
-    username:
-      from_secret: DOCKER_USERNAME
-    password:
-      from_secret: DOCKER_PASSWORD
+  environment:
+    DOCKER_DRIVER: overlay2
+    DOCKER_HOST: tcp://docker:2375
   commands:
+    - docker version
     - VERSION=$(grep 'ENV VERSION' Dockerfile | cut -d '=' -f 2)
     - |
       if [ "${DRONE_BRANCH}" = "dev" ]; then
         VERSION="dev${VERSION}"
       fi
     - docker build -t mullinmax/purrs:$VERSION .
+    - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
     - docker push mullinmax/purrs:$VERSION
+  services:
+    - name: docker
+      image: docker:dind
+      privileged: true
+      volumes:
+        - name: docker_socket
+          path: /var/run
+
 
 - name: push to gitea
   image: alpine/git
