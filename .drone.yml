@@ -9,14 +9,19 @@ steps:
     - pip install pydoc-markdown
     - pip install -r requirements.txt
     - python generate_docs.py
-    - git add docs/*
-    - git commit -m "Update documentation" -a || echo "No changes to commit"
-- name: push to gitea
-  image: alpine/git
-  environment:
-    SSH_KEY:
-      from_secret: GITEA_SSH_KEY
+
+- name: test
+  image: python:3.11
   commands:
+    - pip install pytest pytest-md
+    - pytest --md report.md
+    - mv report.md docs/tests_report.md
+
+- name: commit and push
+  image: alpine/git
+  commands:
+    - git add docs/*
+    - git commit -m "Update documentation and test report" -a || echo "No changes to commit"
     - mkdir /root/.ssh/
     - 'echo -n "$SSH_KEY" | base64 -d > /root/.ssh/id_rsa'
     - 'chmod 600 /root/.ssh/id_rsa'
