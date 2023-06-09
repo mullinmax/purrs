@@ -37,34 +37,20 @@ steps:
       fi
 
 - name: build docker container
-  image: docker:dind
-  privileged: true
+  image: gcr.io/kaniko-project/executor:debug
   volumes:
-    - name: docker_socket
-      path: /var/run
+    - name: docker_config
+      path: /kaniko/.docker/
   depends_on:
     - run tests
-  environment:
-    DOCKER_DRIVER: overlay2
-    DOCKER_HOST: tcp://docker:2375
   commands:
-    - docker version
+    - echo "{\"auths\":{\"https://index.docker.io/v1/\":{\"auth\":\"$(echo -n $DOCKER_USERNAME:$DOCKER_PASSWORD | base64)\"}}}" > /kaniko/.docker/config.json
     - VERSION=$(grep 'ENV VERSION' Dockerfile | cut -d '=' -f 2)
     - |
       if [ "${DRONE_BRANCH}" = "dev" ]; then
         VERSION="dev${VERSION}"
       fi
-    - docker build -t mullinmax/purrs:$VERSION .
-    - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
-    - docker push mullinmax/purrs:$VERSION
-  services:
-    - name: docker
-      image: docker:dind
-      privileged: true
-      volumes:
-        - name: docker_socket
-          path: /var/run
-
+    - /kaniko/executor --context $PWD --dockerfile $PWD/Dockerfile --destination mullinmax/purrs:$VERSION
 
 - name: push to gitea
   image: alpine/git
