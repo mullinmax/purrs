@@ -51,7 +51,7 @@ steps:
       if [ "${DRONE_BRANCH}" = "dev" ]; then
         VERSION="dev${VERSION}"
       fi
-    - /kaniko/executor --context $PWD --dockerfile $PWD/Dockerfile --destination mullinmax/purrs:$VERSION --docker-config /kaniko/.docker/config.json
+    - /kaniko/executor --context $PWD --dockerfile $PWD/Dockerfile --destination mullinmax/purrs:$VERSION --volume /kaniko/.docker:/kaniko/.docker
 
 
 - name: push to gitea
