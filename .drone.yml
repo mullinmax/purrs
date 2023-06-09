@@ -7,7 +7,7 @@ volumes:
   temp: {}
 
 steps:
-- name: generate docs
+- name: generate documentation
   image: python:3.11
   volumes:
     - name: shared
@@ -16,35 +16,55 @@ steps:
     - pip install pydoc-markdown
     - pip install -r requirements.txt
     - python generate_docs.py
-    - mv docs /shared/docs
+    - mv report.md docs/tests_report.md
+    - git add docs/*
+    - git commit -m "Update documentation" -a || echo "No changes to commit"
 
-- name: test
+- name: run tests
   image: python:3.11
   volumes:
     - name: shared
       path: /shared
   commands:
-    - pip install -r requirements.txt
-    - pip install pytest pytest-md
-    - pytest --md report.md
-    - mv report.md /shared/tests_report.md
+    - CHANGED_FILES=$(git diff --name-only HEAD~1 HEAD)
+    - if echo "${CHANGED_FILES}" | grep -q "tests/.*\.py"; then
+        pip install pytest-md
+        pip install -r requirements.txt
+        pytest --md report.md
+        mv report.md docs/tests_report.md
+        git add docs/tests_report.md
+        git commit -m "Update test report" -a || echo "No changes to test report"
+      fi
 
-- name: commit and push
+- name: build docker container
+  image: plugins/docker
+  settings:
+    context: .
+    repo: mullinmax/purrs
+    username:
+      from_secret: DOCKER_USERNAME
+    password:
+      from_secret: DOCKER_PASSWORD
+  commands:
+    - VERSION=$(grep 'ENV VERSION' Dockerfile | cut -d '=' -f 2)
+    - if [ "${DRONE_BRANCH}" = "dev" ]; then
+        VERSION="dev${VERSION}"
+      fi
+    - docker build -t mullinmax/purrs:$VERSION .
+    - docker push mullinmax/purrs:$VERSION
+
+- name: push to gitea
   image: alpine/git
-  depends_on:
-    - generate docs
-    - test
-  environment:
-    SSH_KEY:
-      from_secret: GITEA_SSH_KEY
   volumes:
     - name: shared
       path: /shared
+  depends_on:
+    - generate documentation
+    - run tests
+  environment:
+    SSH_KEY:
+      from_secret: GITEA_SSH_KEY
   commands:
-    - mv /shared/docs docs
-    - mv /shared/tests_report.md docs/tests_report.md
-    - git add docs/*
-    - git commit -m "Update documentation and test report" -a || echo "No changes to commit"
     - mkdir /root/.ssh/
     - 'echo -n "$SSH_KEY" | base64 -d > /root/.ssh/id_rsa'
     - 'chmod 600 /root/.ssh/id_rsa'
@@ -57,5 +77,6 @@ steps:
 trigger:
   branch:
     - dev
+    - main
   event:
     - push
