@@ -44,13 +44,15 @@ steps:
   depends_on:
     - run tests
   commands:
+    - mkdir -p /kaniko/.docker/
     - echo "{\"auths\":{\"https://index.docker.io/v1/\":{\"auth\":\"$(echo -n $DOCKER_USERNAME:$DOCKER_PASSWORD | base64)\"}}}" > /kaniko/.docker/config.json
     - VERSION=$(grep 'ENV VERSION' Dockerfile | cut -d '=' -f 2)
     - |
       if [ "${DRONE_BRANCH}" = "dev" ]; then
         VERSION="dev${VERSION}"
       fi
-    - /kaniko/executor --context $PWD --dockerfile $PWD/Dockerfile --destination mullinmax/purrs:$VERSION
+    - /kaniko/executor --context $PWD --dockerfile $PWD/Dockerfile --destination mullinmax/purrs:$VERSION --docker-config /kaniko/.docker/config.json
+
 
 - name: push to gitea
   image: alpine/git
