@@ -23,6 +23,9 @@ steps:
   depends_on:
     - generate docs
     - test
+  environment:
+    SSH_KEY:
+      from_secret: GITEA_SSH_KEY
   commands:
     - git add docs/*
     - git commit -m "Update documentation and test report" -a || echo "No changes to commit"
