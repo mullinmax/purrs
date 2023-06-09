@@ -78,7 +78,7 @@ steps:
     password:
       from_secret: DOCKER_PASSWORD
     repo: mullinmax/purrs
-    tags: dev${BUILD_NUMBER}
+    tags: dev${DRONE_BUILD_NUMBER}
   when:
     branch:
       - dev
