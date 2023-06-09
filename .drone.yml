@@ -36,22 +36,37 @@ steps:
         git commit -m "Update test report" -a || echo "No changes to test report"
       fi
 
+# - name: build docker container
+#   image: gcr.io/kaniko-project/executor:debug
+#   volumes:
+#     - name: docker_config
+#       path: /kaniko/.docker/
+#   depends_on:
+#     - run tests
+#   commands:
+#     - mkdir -p /kaniko/.docker/
+#     - echo "{\"auths\":{\"https://index.docker.io/v1/\":{\"auth\":\"$(echo -n $DOCKER_USERNAME:$DOCKER_PASSWORD | base64)\"}}}" > /kaniko/.docker/config.json
+#     - VERSION=$(grep 'ENV VERSION' Dockerfile | cut -d '=' -f 2)
+#     - |
+#       if [ "${DRONE_BRANCH}" = "dev" ]; then
+#         VERSION="dev${VERSION}"
+#       fi
+#     - /kaniko/executor --context $PWD --dockerfile $PWD/Dockerfile --destination mullinmax/purrs:$VERSION --volume /kaniko/.docker:/kaniko/.docker
+
 - name: build docker container
-  image: gcr.io/kaniko-project/executor:debug
-  volumes:
-    - name: docker_config
-      path: /kaniko/.docker/
+  image: plugins/kaniko
   depends_on:
     - run tests
-  commands:
-    - mkdir -p /kaniko/.docker/
-    - echo "{\"auths\":{\"https://index.docker.io/v1/\":{\"auth\":\"$(echo -n $DOCKER_USERNAME:$DOCKER_PASSWORD | base64)\"}}}" > /kaniko/.docker/config.json
-    - VERSION=$(grep 'ENV VERSION' Dockerfile | cut -d '=' -f 2)
-    - |
-      if [ "${DRONE_BRANCH}" = "dev" ]; then
-        VERSION="dev${VERSION}"
-      fi
-    - /kaniko/executor --context $PWD --dockerfile $PWD/Dockerfile --destination mullinmax/purrs:$VERSION --volume /kaniko/.docker:/kaniko/.docker
+  settings:
+    username: mullinmax
+      from_secret: DOCKER_USERNAME
+    password:
+      from_secret: DOCKER_PASSWORD
+    repo: mullinmax/purrs
+    tags: latest
+  when:
+    branch:
+      - main
 
 
 - name: push to gitea
