@@ -3,4 +3,3 @@ feedgenerator
 pytest
 ruff
 sqlalchemy
-pdoc3
