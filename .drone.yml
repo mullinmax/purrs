@@ -28,7 +28,6 @@ steps:
 
 trigger:
   branch:
-    - main
+    - dev
   event:
-    - pull_request
     - push
