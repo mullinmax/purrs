@@ -40,6 +40,10 @@ In essence, Purrs is about optimizing your online content consumption by ensurin
 - Sorts and categorizes feed items using machine learning
 - Enables liking/disliking to train model over time
 
+## Documentation
+
+Documentation can be found as markdown files in the [purrs/docs](./docs) folder
+
 ## Building the Docker Image
 
 To build the Docker image, run the following command:

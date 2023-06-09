@@ -18,7 +18,7 @@ steps:
       from_secret: GITEA_SSH_KEY
   commands:
     - mkdir /root/.ssh/
-    - 'echo -n "$SSH_KEY" > /root/.ssh/id_rsa'
+    - 'echo -n "$SSH_KEY" | base64 -d > /root/.ssh/id_rsa'
     - 'chmod 600 /root/.ssh/id_rsa'
     - 'ssh-keyscan -p 2222 -t rsa gitea.doze.dev >> /root/.ssh/known_hosts'
     - git config --global user.email "mullinmax@gmail.com"
@@ -27,10 +27,8 @@ steps:
     - git push origin HEAD
 
 trigger:
+  branch:
+    - main
   event:
     - pull_request
     - push
-  branch:
-    - '*'
-  target:
-    - main
