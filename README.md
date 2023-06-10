@@ -5,8 +5,6 @@
 ![GitHub license](https://shields.doze.dev/badge/license-MIT-green?style=for-the-badge&logo=unlicense)
 ![Docker Image Size](https://shields.doze.dev/docker/image-size/mullinmax/purrs?logo=docker&sort=semver&style=for-the-badge)
 ![Docker Pulls](https://shields.doze.dev/docker/pulls/mullinmax/purrs?logo=docker&style=for-the-badge)
-![Docker Version](https://shields.doze.dev/docker/v/mullinmax/purrs?logo=docker&sort=semver&style=for-the-badge)
-
 
 Purrs is a web application that fetches RSS feeds from various sources, sorts and categorizes them, and displays them in a user-friendly web UI.
 
