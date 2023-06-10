@@ -45,10 +45,10 @@ class RSSFeed:
         """
         items = []
         for entry in self.feed.entries:
-            published_datetime = datetime.datetime.strptime(entry.published, '%a, %d %b %Y %H:%M:%S %Z')
+            published_datetime = datetime.datetime.strptime(entry['published'], '%a, %d %b %Y %H:%M:%S %Z')
             item = FeedItem(
-                title=entry.title, 
-                link=entry.link, 
+                title=entry['title'], 
+                link=entry['link'], 
                 published=published_datetime,
                 description=entry.get('description', ''),  # Use dict.get to handle optional fields
                 author=entry.get('author', ''),
@@ -56,3 +56,4 @@ class RSSFeed:
             )
             items.append(item)
         return items
+

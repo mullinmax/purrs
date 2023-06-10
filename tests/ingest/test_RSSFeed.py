@@ -1,11 +1,11 @@
 import pytest
 from unittest.mock import patch, MagicMock
 from src.ingest.RSSFeed import RSSFeed
-from src.database import FeedItem  
+from src.database.FeedItem import FeedItem  
 
 @pytest.fixture
 def mock_feedparser():
-    with patch('feedparser.parse') as mock_feedparser:
+    with patch('src.ingest.RSSFeed.feedparser.parse') as mock_feedparser:
         yield mock_feedparser
 
 def test_get_items(mock_feedparser):
@@ -20,7 +20,7 @@ def test_get_items(mock_feedparser):
             'id': 'Test GUID'
         }
     ]
-    mock_feedparser.parse.return_value = mock_feed
+    mock_feedparser.return_value = mock_feed
 
     rss = RSSFeed('http://test.com/rss')
     items = rss.get_items()
