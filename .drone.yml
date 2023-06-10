@@ -7,28 +7,6 @@ volumes:
   temp: {}
 
 steps:
-- name: get version
-  image: alpine
-  volumes:
-    - name: shared
-      path: /shared
-  commands:
-    - version=$(grep 'ENV VERSION' Dockerfile | cut -d '=' -f2)
-    - echo $version > /shared/.version
-
-- name: generate tags
-  image: alpine
-  volumes:
-    - name: shared
-      path: /shared
-  commands:
-    - |
-      if [ "${DRONE_BRANCH}" = "main" ]; then
-        echo -e "latest\n$(cat /shared/.version)" > /shared/.tags
-      else
-        echo "dev${DRONE_BUILD_NUMBER}" > /shared/.tags
-      fi
-
 - name: run tests
   image: python:3.11
   volumes:
@@ -65,19 +43,32 @@ steps:
       path: /shared
   depends_on:
     - run tests
-    - get version
-    - generate tags
+    - generate documentation
   settings:
     username:
       from_secret: DOCKER_USERNAME
     password:
       from_secret: DOCKER_PASSWORD
     repo: mullinmax/purrs
-    tags: 
-      from_file: /shared/.tags
+    auto_tag: true
+    tags:
+      - latest
   when:
     branch:
       - main
+
+- name: build docker container
+  image: plugins/kaniko
+  settings:
+    username:
+      from_secret: DOCKER_USERNAME
+    password:
+      from_secret: DOCKER_PASSWORD
+    repo: mullinmax/purrs
+    tags:
+      - ${DRONE_SEMVER}
+  when:
+    branch:
       - dev
 
 - name: push to gitea
