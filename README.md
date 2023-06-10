@@ -69,7 +69,7 @@ flowchart TD
     end
     source --> item
 
-    subgraph scrape
+    subgraph ingest
         rss_reader
         url_specific_parser
         diff_check
@@ -116,7 +116,7 @@ flowchart TD
 erDiagram
     item {
         item_id id
-        source_id id
+        feed_id id
         title string
         body string
         raw_xml string
@@ -126,8 +126,8 @@ erDiagram
         liked bool "true, false and null"
     }
 
-    item_source {
-        item_source_id id
+    feed {
+        feed_id id
         name string
         url string
         source type
@@ -168,7 +168,7 @@ erDiagram
         admin bool
     }
 
-    item ||--|| item_source : from
+    item ||--|| feed : from
     vector ||--|| vector_source : from
     item ||--|| vector : describes
     item ||--|| item_score : ranks
