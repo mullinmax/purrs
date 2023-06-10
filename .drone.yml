@@ -29,18 +29,6 @@ steps:
         echo "dev${DRONE_BUILD_NUMBER}" > /shared/.tags
       fi
 
-- name: generate documentation
-  image: python:3.11
-  volumes:
-    - name: shared
-      path: /shared
-  commands:
-    - pip install pydoc-markdown
-    - pip install -r requirements.txt
-    - python generate_docs.py
-    - git add docs/*
-    - git commit -m "Update documentation" -a || echo "No changes to commit"
-
 - name: run tests
   image: python:3.11
   volumes:
@@ -57,6 +45,18 @@ steps:
         git add docs/tests_report.md
         git commit -m "Update test report" -a || echo "No changes to test report"
       fi
+
+- name: generate documentation
+  image: python:3.11
+  volumes:
+    - name: shared
+      path: /shared
+  commands:
+    - pip install pydoc-markdown
+    - pip install -r requirements.txt
+    - python generate_docs.py
+    - git add docs/*
+    - git commit -m "Update documentation" -a || echo "No changes to commit"
 
 - name: build docker container
   image: plugins/kaniko
