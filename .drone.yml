@@ -52,24 +52,21 @@ steps:
     repo: mullinmax/purrs
     auto_tag: true
     tags:
-      - latest
-  when:
-    branch:
-      - main
+      - ${DRONE_COMMIT_SHA}
 
-- name: build docker container
-  image: plugins/kaniko
-  settings:
-    username:
-      from_secret: DOCKER_USERNAME
-    password:
-      from_secret: DOCKER_PASSWORD
-    repo: mullinmax/purrs
-    tags:
-      - ${DRONE_SEMVER}
-  when:
-    branch:
-      - dev
+# - name: build docker container
+#   image: plugins/kaniko
+#   settings:
+#     username:
+#       from_secret: DOCKER_USERNAME
+#     password:
+#       from_secret: DOCKER_PASSWORD
+#     repo: mullinmax/purrs
+#     tags:
+#       - ${DRONE_SEMVER}
+#   when:
+#     branch:
+#       - dev
 
 - name: push to gitea
   image: alpine/git
