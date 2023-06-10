@@ -14,7 +14,20 @@ steps:
       path: /shared
   commands:
     - version=$(grep 'ENV VERSION' Dockerfile | cut -d '=' -f2)
-    - echo $version > .version
+    - echo $version > /shared/.version
+
+- name: generate tags
+  image: alpine
+  volumes:
+    - name: shared
+      path: /shared
+  commands:
+    - |
+      if [ "${DRONE_BRANCH}" = "main" ]; then
+        echo -e "latest\n$(cat /shared/.version)" > /shared/.tags
+      else
+        echo "dev${DRONE_BUILD_NUMBER}" > /shared/.tags
+      fi
 
 - name: generate documentation
   image: python:3.11
@@ -45,7 +58,7 @@ steps:
         git commit -m "Update test report" -a || echo "No changes to test report"
       fi
 
-- name: build main docker container
+- name: build docker container
   image: plugins/kaniko
   volumes:
     - name: shared
@@ -60,25 +73,10 @@ steps:
       from_secret: DOCKER_PASSWORD
     repo: mullinmax/purrs
     tags: 
-      - latest
-      - from_file: .version
+      from_file: /shared/.tags
   when:
     branch:
       - main
-
-- name: build dev docker container
-  image: plugins/kaniko
-  depends_on:
-    - run tests
-  settings:
-    username:
-      from_secret: DOCKER_USERNAME
-    password:
-      from_secret: DOCKER_PASSWORD
-    repo: mullinmax/purrs
-    tags: dev${DRONE_BUILD_NUMBER}
-  when:
-    branch:
       - dev
 
 - name: push to gitea
