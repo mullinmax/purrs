@@ -51,8 +51,6 @@ steps:
       from_secret: DOCKER_PASSWORD
     repo: mullinmax/purrs
     auto_tag: true
-    tags:
-      - ${DRONE_COMMIT_SHA}
 
 # - name: build docker container
 #   image: plugins/kaniko
