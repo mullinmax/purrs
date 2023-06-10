@@ -66,6 +66,7 @@ steps:
   depends_on:
     - run tests
     - get version
+    - generate tags
   settings:
     username:
       from_secret: DOCKER_USERNAME
