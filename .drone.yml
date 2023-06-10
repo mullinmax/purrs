@@ -53,9 +53,9 @@ steps:
     tags:
       - ${DRONE_COMMIT_SHA}
       - latest
-    when:
-      branch:
-        - main
+  when:
+    branch:
+      - main
 
 - name: build docker container dev
   image: plugins/kaniko
