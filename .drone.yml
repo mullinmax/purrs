@@ -36,7 +36,7 @@ steps:
     - git add docs/*
     - git commit -m "Update documentation" -a || echo "No changes to commit"
 
-- name: build docker container
+- name: build docker container main
   image: plugins/kaniko
   volumes:
     - name: shared
@@ -57,7 +57,7 @@ steps:
       branch:
         - main
 
-- name: build docker container
+- name: build docker container dev
   image: plugins/kaniko
   settings:
     username:
