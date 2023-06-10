@@ -7,27 +7,6 @@ volumes:
   temp: {}
 
 steps:
-- name: get version
-  image: alpine
-  volumes:
-    - name: shared
-      path: /shared
-  commands:
-    - version=$(grep 'ENV VERSION' Dockerfile | cut -d '=' -f2)
-    - echo $version > .version
-
-- name: generate documentation
-  image: python:3.11
-  volumes:
-    - name: shared
-      path: /shared
-  commands:
-    - pip install pydoc-markdown
-    - pip install -r requirements.txt
-    - python generate_docs.py
-    - git add docs/*
-    - git commit -m "Update documentation" -a || echo "No changes to commit"
-
 - name: run tests
   image: python:3.11
   volumes:
@@ -45,38 +24,50 @@ steps:
         git commit -m "Update test report" -a || echo "No changes to test report"
       fi
 
-- name: build main docker container
+- name: generate documentation
+  image: python:3.11
+  volumes:
+    - name: shared
+      path: /shared
+  commands:
+    - pip install pydoc-markdown
+    - pip install -r requirements.txt
+    - python generate_docs.py
+    - git add docs/*
+    - git commit -m "Update documentation" -a || echo "No changes to commit"
+
+- name: build docker container main
   image: plugins/kaniko
   volumes:
     - name: shared
       path: /shared
   depends_on:
     - run tests
-    - get version
+    - generate documentation
   settings:
     username:
       from_secret: DOCKER_USERNAME
     password:
       from_secret: DOCKER_PASSWORD
     repo: mullinmax/purrs
-    tags: 
+    tags:
+      - ${DRONE_COMMIT_SHA}
       - latest
-      - from_file: .version
   when:
     branch:
       - main
 
-- name: build dev docker container
+- name: build docker container dev
   image: plugins/kaniko
-  depends_on:
-    - run tests
   settings:
     username:
       from_secret: DOCKER_USERNAME
     password:
       from_secret: DOCKER_PASSWORD
     repo: mullinmax/purrs
-    tags: dev${DRONE_BUILD_NUMBER}
+    tags:
+      - ${DRONE_COMMIT_SHA}
+      - ${DRONE_COMMIT_BRANCH}
   when:
     branch:
       - dev
