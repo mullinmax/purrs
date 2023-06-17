@@ -1,7 +1,7 @@
 import pytest
 from unittest.mock import patch, MagicMock
 from src.ingest.RSSFeed import RSSFeed
-from src.database.FeedItem import FeedItem  
+from src.database.FeedItem import FeedItem
 
 @pytest.fixture
 def mock_feedparser():

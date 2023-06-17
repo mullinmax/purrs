@@ -44,7 +44,7 @@ docker build -t purrs .
  - [x] setup build pipeline
  - [x] ingest data from > 1 subreddit
  - [x] setup db schema
- - [ ] save data into sqlite
+ - [x] save data into sqlite
  - [ ] basic deduplicate data
  - [ ] web ui display text items
  - [ ] web ui like/dislike buttons write to db

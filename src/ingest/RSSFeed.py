@@ -1,8 +1,9 @@
 import feedparser
 from typing import List
 import datetime
+from dateutil.parser import parse
 
-from ..database.FeedItem import FeedItem
+from src.database.FeedItem import FeedItem
 
 class RSSFeed:
     """
@@ -45,7 +46,11 @@ class RSSFeed:
         """
         items = []
         for entry in self.feed.entries:
-            published_datetime = datetime.datetime.strptime(entry['published'], '%a, %d %b %Y %H:%M:%S %Z')
+            try:
+                published_datetime = parse(entry['published'])
+            except ValueError:
+                print(f"Warning: could not parse date: {entry['published']}")
+                published_datetime = None  # or some default value
             item = FeedItem(
                 title=entry['title'], 
                 link=entry['link'], 
@@ -56,4 +61,3 @@ class RSSFeed:
             )
             items.append(item)
         return items
-
