@@ -5,8 +5,6 @@
 ![GitHub license](https://shields.doze.dev/badge/license-MIT-green?style=for-the-badge&logo=unlicense)
 ![Docker Image Size](https://shields.doze.dev/docker/image-size/mullinmax/purrs?logo=docker&sort=semver&style=for-the-badge)
 ![Docker Pulls](https://shields.doze.dev/docker/pulls/mullinmax/purrs?logo=docker&style=for-the-badge)
-![Docker Version](https://shields.doze.dev/docker/v/mullinmax/purrs?logo=docker&sort=semver&style=for-the-badge)
-
 
 Purrs is a web application that fetches RSS feeds from various sources, sorts and categorizes them, and displays them in a user-friendly web UI.
 
@@ -46,7 +44,7 @@ docker build -t purrs .
  - [x] setup build pipeline
  - [x] ingest data from > 1 subreddit
  - [x] setup db schema
- - [ ] save data into sqlite
+ - [x] save data into sqlite
  - [ ] basic deduplicate data
  - [ ] web ui display text items
  - [ ] web ui like/dislike buttons write to db
@@ -71,7 +69,7 @@ flowchart TD
     end
     source --> item
 
-    subgraph scrape
+    subgraph ingest
         rss_reader
         url_specific_parser
         diff_check
@@ -118,7 +116,7 @@ flowchart TD
 erDiagram
     item {
         item_id id
-        source_id id
+        feed_id id
         title string
         body string
         raw_xml string
@@ -128,8 +126,8 @@ erDiagram
         liked bool "true, false and null"
     }
 
-    item_source {
-        item_source_id id
+    feed {
+        feed_id id
         name string
         url string
         source type
@@ -170,7 +168,7 @@ erDiagram
         admin bool
     }
 
-    item ||--|| item_source : from
+    item ||--|| feed : from
     vector ||--|| vector_source : from
     item ||--|| vector : describes
     item ||--|| item_score : ranks
