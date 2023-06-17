@@ -44,7 +44,7 @@ docker build -t purrs .
  - [x] setup build pipeline
  - [x] ingest data from > 1 subreddit
  - [x] setup db schema
- - [ ] save data into sqlite
+ - [x] save data into sqlite
  - [ ] basic deduplicate data
  - [ ] web ui display text items
  - [ ] web ui like/dislike buttons write to db
@@ -69,7 +69,7 @@ flowchart TD
     end
     source --> item
 
-    subgraph scrape
+    subgraph ingest
         rss_reader
         url_specific_parser
         diff_check
@@ -116,7 +116,7 @@ flowchart TD
 erDiagram
     item {
         item_id id
-        source_id id
+        feed_id id
         title string
         body string
         raw_xml string
@@ -126,8 +126,8 @@ erDiagram
         liked bool "true, false and null"
     }
 
-    item_source {
-        item_source_id id
+    feed {
+        feed_id id
         name string
         url string
         source type
@@ -168,7 +168,7 @@ erDiagram
         admin bool
     }
 
-    item ||--|| item_source : from
+    item ||--|| feed : from
     vector ||--|| vector_source : from
     item ||--|| vector : describes
     item ||--|| item_score : ranks
