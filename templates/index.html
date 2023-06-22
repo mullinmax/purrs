@@ -1,0 +1,22 @@
+<!-- templates/index.html -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>RSS Feed</title>
+</head>
+<body>
+    <h1>RSS Feed</h1>
+    <ul>
+        {% for item in items %}
+        <li>
+            <h2>{{ item.title }}</h2>
+            <p>Published at: {{ item.published }}</p>
+            <p>Author: {{ item.author }}</p>
+            <p><a href="{{ item.link }}">Read more</a></p>
+        </li>
+        {% endfor %}
+    </ul>
+</body>
+</html>
