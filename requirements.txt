@@ -4,3 +4,4 @@ pytest
 ruff
 sqlalchemy
 python-dateutil
+flask
