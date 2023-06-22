@@ -3,4 +3,3 @@ This index contains links to documentation for each module in the project. Click
 
 - [database](database.md)
 - [ingest](ingest.md)
-- [main](main.md)
