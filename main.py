@@ -1,29 +1,32 @@
-# app.py
+from flask import Flask, jsonify, request, render_template
+from flask_cors import CORS
 
-from flask import Flask, render_template
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
-from src.database.base import Base  # Import the shared Base object
-from src.database.FeedItem import FeedItem  # This must come after importing Base
-from src.ingest.RSSFeed import RSSFeed
+from src.item.url import URLItem
 
-app = Flask(__name__)
+app = Flask(__name__, static_url_path='')
+CORS(app)
 
-engine = create_engine('sqlite:///rss.sqlite')
-Session = sessionmaker(bind=engine)
-session = Session()
+websites = [
+    URLItem('https://www.google.com'),
+    URLItem('https://www.youtube.com/watch?v=btN_ge9S9No'),
+]
 
-@app.route("/")
-def home():
-    feed = RSSFeed('https://www.reddit.com/r/d100/.rss')
-    items = feed.get_items()
+@app.route('/websites', methods=['GET'])
+def get_websites():
+    return jsonify(websites)
 
-    for item in items:  # Make sure to add items one by one, not the entire list
-        session.add(item)
-    session.commit()
+@app.route('/websites', methods=['POST'])
+def rate_website():
+    data = request.get_json()
+    # You could save the user's rating here, for example:
+    print(f'User rated website {data["website"]} as {data["rating"]}')
+    return '', 204
 
-    return render_template('index.html', items=items)
+@app.route('/')
+def index():
+    print(websites[0])
+    return render_template('index.html', previews=websites, base_url='https://codehost.doze.dev')
+
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=5000, debug=True)
-

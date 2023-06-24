@@ -1,22 +1,37 @@
-<!-- templates/index.html -->
-
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>RSS Feed</title>
+  <meta charset="utf-8">
+  <title>Link Previews</title>
+  <style>
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      grid-gap: 1em;
+    }
+    .preview {
+      border: 1px solid #ccc;
+      padding: 1em;
+      box-shadow: 1px 1px 3px rgba(0, 0, 0, .2);
+    }
+    .preview img {
+      max-width: 100%;
+      height: auto;
+    }
+  </style>
 </head>
 <body>
-    <h1>RSS Feed</h1>
-    <ul>
-        {% for item in items %}
-        <li>
-            <h2>{{ item.title }}</h2>
-            <p>Published at: {{ item.published }}</p>
-            <p>Author: {{ item.author }}</p>
-            <p><a href="{{ item.link }}">Read more</a></p>
-        </li>
-        {% endfor %}
-    </ul>
+  <h1>Link Previews</h1>
+  <div class="grid">
+    {% for preview in previews %}
+      <div class="preview">
+        <h2><a href="{{ preview['url'] }}">{{ preview['title'] }}</a></h2>
+        <p>{{ preview['description'] }}</p>
+        {% if preview['image'] != 'No image found' %}
+          <img src="{{ preview['image'] }}" alt="{{ preview['title'] }}" />
+        {% endif %}
+      </div>
+    {% endfor %}
+  </div>
 </body>
 </html>
