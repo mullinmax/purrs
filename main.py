@@ -43,7 +43,7 @@ def background_job():
         time.sleep(3600) # wait one hour
 
 thread = threading.Thread(target=background_job)
-# thread.start()
+thread.start()
 
 @app.route('/')
 def index():

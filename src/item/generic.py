@@ -64,17 +64,24 @@ class GenericItem:
         return f'URL: {self.url}\nShort URL: {self.short_url}\nTitle: {self.title}\nDescription: {self.description}\nImage: {self.image}\nPublished Date: {self.published_date}\nAuthor: {self.author}'
 
     def save_to_db(self, sqlalchemy_session):
-        item_model = ItemModel(
-            url=self.url,
-            short_url=self.short_url,
-            title=self.title,
-            description=self.description,
-            image=self.image,
-            published_date=self.published_date,
-            author=self.author
-        )
-        sqlalchemy_session.add(item_model)
-        sqlalchemy_session.commit()
+        existing_item = sqlalchemy_session.query(ItemModel).filter(ItemModel.url == self.url).one_or_none()
+        if existing_item is None:
+            item_model = ItemModel(
+                url=self.url,
+                short_url=self.short_url,
+                title=self.title,
+                description=self.description,
+                image=self.image,
+                published_date=self.published_date,
+                author=self.author
+            )
+            sqlalchemy_session.add(item_model)
+            try:
+                sqlalchemy_session.commit()
+            except SQLAlchemyError as e:
+                print(f"Error occurred while committing to the database: {e}")
+        else:
+            print(f"Item with url {self.url} already exists in the database.")
 
     @classmethod
     def load_from_db(cls, sqlalchemy_session, id):

@@ -5,7 +5,7 @@ class ItemModel(Base):
     __tablename__ = 'item'
 
     id = Column(Integer, primary_key=True)
-    url = Column(String)
+    url = Column(String, unique=True)
     short_url = Column(String)
     title = Column(String)
     description = Column(String)
