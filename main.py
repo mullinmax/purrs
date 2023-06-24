@@ -1,10 +1,14 @@
 import threading
 import time
-import sqlite3
 
 from flask import Flask, jsonify, request, render_template
 from flask_cors import CORS
 from apscheduler.schedulers.background import BackgroundScheduler
+
+from sqlalchemy.orm import sessionmaker
+from sqlalchemy import create_engine
+
+from src.database.base import Base
 
 from src.task.read_feeds import read_feeds
 from src.item.generic import GenericItem
@@ -13,6 +17,13 @@ app = Flask(__name__, static_url_path='')
 CORS(app)
 
 DATABASE = 'purrs.sqlite'
+
+
+engine = create_engine('sqlite:///purrs.sqlite')
+Session = sessionmaker(bind=engine)
+
+# Create tables.
+Base.metadata.create_all(engine)
 
 background_tasks = [
     read_feeds
@@ -26,8 +37,8 @@ background_tasks = [
 def background_job():
     while True:
         for task in background_tasks:
-            with sqlite3.connect(DATABASE) as db:
-                task(db)
+            with Session() as session:
+                task(session)
         time.sleep(3600) # wait one hour
 
 thread = threading.Thread(target=background_job)
@@ -47,4 +58,4 @@ def index():
 
 
 if __name__ == "__main__":
-    app.run(host='0.0.0.0', port=5000, debug=True)
+    app.run(host='0.0.0.0', port=5000, debug=False)

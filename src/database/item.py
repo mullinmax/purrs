@@ -10,3 +10,5 @@ class ItemModel(Base):
     title = Column(String)
     description = Column(String)
     image = Column(String)
+    published_date = Column(DateTime)
+    author = Column(String)

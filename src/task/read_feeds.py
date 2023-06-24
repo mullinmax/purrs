@@ -1,6 +1,6 @@
 from src.feed.rss import RSSFeed
 
-def read_feeds(db):
+def read_feeds(sqlalchemy_session):
     print('''
     
     READING FEEDS
@@ -13,5 +13,5 @@ def read_feeds(db):
         items = feed.get_items()
         for item in items:
             print(item)
-            item.save_to_db(db)
+            item.save_to_db(sqlalchemy_session)
     

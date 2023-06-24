@@ -63,7 +63,7 @@ class GenericItem:
     def __str__(self):
         return f'URL: {self.url}\nShort URL: {self.short_url}\nTitle: {self.title}\nDescription: {self.description}\nImage: {self.image}\nPublished Date: {self.published_date}\nAuthor: {self.author}'
 
-    def save_to_db(self, session):
+    def save_to_db(self, sqlalchemy_session):
         item_model = ItemModel(
             url=self.url,
             short_url=self.short_url,
@@ -73,19 +73,19 @@ class GenericItem:
             published_date=self.published_date,
             author=self.author
         )
-        session.add(url_item_model)
-        session.commit()
+        sqlalchemy_session.add(item_model)
+        sqlalchemy_session.commit()
 
     @classmethod
-    def load_from_db(cls, session, id):
-        item_model = session.query(ItemModel).get(id)
+    def load_from_db(cls, sqlalchemy_session, id):
+        item_model = sqlalchemy_session.query(ItemModel).get(id)
         if item_model:
             return cls(
-                url=url_item_model.url,
-                short_url=url_item_model.short_url,
-                title=url_item_model.title,
-                description=url_item_model.description,
-                image=url_item_model.image,
-                published_date=url_item_model.published_date,
-                author=url_item_model.author
+                url=item_model.url,
+                short_url=item_model.short_url,
+                title=item_model.title,
+                description=item_model.description,
+                image=item_model.image,
+                published_date=item_model.published_date,
+                author=item_model.author
             )
