@@ -2,18 +2,17 @@ from previewlink import preview_link
 from urllib.parse import urlparse, urljoin
 from bs4 import BeautifulSoup
 import requests
-
 from src.database.item import ItemModel
 
 class GenericItem:
-    def __init__(self, url, published_date=None, author=None):
+    def __init__(self, url, published_date=None, author=None, title=None, description=None, image=None):
         self.url = url
         self._html = None
         self.short_url = self._get_short_url()
         self.metadata = self._get_preview_metadata()
-        self.title = self._get_title()
-        self.description = self._get_description()
-        self.image = self._get_image()
+        self.title = title or self._get_title()
+        self.description = description or self._get_description()
+        self.image = image or self._get_image()
         self.published_date = published_date
         self.author = author
 
@@ -41,19 +40,14 @@ class GenericItem:
         return self.metadata.get('description')
 
     def _get_image(self):
-        # Get image from metadata
         if self.metadata.get('image'):
             return self._resolve_url(self.metadata.get('image'))
 
-        # If not available, fetch from HTML
         soup = BeautifulSoup(self.html, 'html.parser')
-
-        # Try to find favicon
         icon_link = soup.find("link", rel="icon")
         if icon_link:
             return self._resolve_url(icon_link['href'])
 
-        # As a last resort, use any image available in the HTML
         img_tag = soup.find("img")
         if img_tag:
             return self._resolve_url(img_tag['src'])
@@ -64,10 +58,10 @@ class GenericItem:
         return urljoin(self.url, url)
 
     def __repr__(self):
-        return f'URLItem("{self.url}")'
+        return f'GenericItem("{self.url}")'
 
     def __str__(self):
-        return f'URL: {self.url}\nShort URL: {self.short_url}\nTitle: {self.title}\nDescription: {self.description}\nImage: {self.image}'
+        return f'URL: {self.url}\nShort URL: {self.short_url}\nTitle: {self.title}\nDescription: {self.description}\nImage: {self.image}\nPublished Date: {self.published_date}\nAuthor: {self.author}'
 
     def save_to_db(self, session):
         item_model = ItemModel(
@@ -84,7 +78,7 @@ class GenericItem:
 
     @classmethod
     def load_from_db(cls, session, id):
-    item_model = session.query(ItemModel).get(id)
+        item_model = session.query(ItemModel).get(id)
         if item_model:
             return cls(
                 url=url_item_model.url,

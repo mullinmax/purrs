@@ -1,21 +1,18 @@
+import threading
+import time
+import sqlite3
+
 from flask import Flask, jsonify, request, render_template
 from flask_cors import CORS
 from apscheduler.schedulers.background import BackgroundScheduler
 
 from src.task.read_feeds import read_feeds
-
-from src.item.url import URLItem
+from src.item.generic import GenericItem
 
 app = Flask(__name__, static_url_path='')
 CORS(app)
 
 DATABASE = 'purrs.sqlite'
-
-def db_task_wrapper(func):
-    def f():
-        with sqlite3.connect('purrs.sqlite') as db:
-            func(db)
-    return f
 
 background_tasks = [
     read_feeds
@@ -25,20 +22,22 @@ background_tasks = [
     # score_items
 ]
 
-scheduler = BackgroundScheduler()
-for task in background_tasks:
-    scheduler.add_job(
-        db_task_wrapper(task), # passes a database connection to each task
-        'interval', 
-        hours=1
-    )
-scheduler.start()
+
+def background_job():
+    while True:
+        for task in background_tasks:
+            with sqlite3.connect(DATABASE) as db:
+                task(db)
+        time.sleep(3600) # wait one hour
+
+thread = threading.Thread(target=background_job)
+thread.start()
 
 websites = [
-    URLItem('https://www.google.com'),
-    URLItem('https://www.youtube.com/watch?v=btN_ge9S9No'),
-    URLItem("https://www.youtube.com/watch?v=Kd9W-t0sy4s"),
-    URLItem("https://www.reddit.com/r/pics/comments/14gkznm/hide_your_mothers_john_oliver_is_back_in_town/")
+    GenericItem('https://www.google.com'),
+    GenericItem('https://www.youtube.com/watch?v=btN_ge9S9No'),
+    GenericItem("https://www.youtube.com/watch?v=Kd9W-t0sy4s"),
+    GenericItem("https://www.reddit.com/r/pics/comments/14gkznm/hide_your_mothers_john_oliver_is_back_in_town/")
 ]
 
 @app.route('/')
