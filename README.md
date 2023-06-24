@@ -45,10 +45,13 @@ docker build -t purrs .
  - [x] ingest data from > 1 subreddit
  - [x] setup db schema
  - [x] save data into sqlite
- - [ ] deduplicate data by URL
+ - [x] deduplicate data by URL
  - [x] web ui display text and image items
+ - [ ] save and load feeds from DB
+ - [ ] flask route for reading feed
  - [ ] page for viewing existing feeds
- - [ ] allow adding, remoing and editing feeds
+ - [ ] flask route for removing feed
+ - [ ] page button for deleting feeds
  - [ ] automatic feed type detection (reddit url -> RedditFeed class)
  - [ ] RedditFeed cleans up image selection & description
  - [ ] web ui like/dislike buttons write to db

@@ -3,12 +3,11 @@ from typing import List
 import datetime
 from dateutil.parser import parse
 
-from src.item.generic import GenericItem
+from src.item.reddit import ReditItem
 
-class RSSFeed:
-    def __init__(self, url: str, id:int, last_pulled:) -> None:
-        self.url = url
-        self.feed = feedparser.parse(self.url)
+class RedditFeed(RSSFeed):
+    def __init__(self, url: str) -> None:
+        super().__init__(url)
 
     def get_items(self) -> List[GenericItem]:
         items = []
@@ -18,13 +17,14 @@ class RSSFeed:
             except ValueError:
                 print(f"Warning: could not parse date: {entry['published']}")
                 published_datetime = None
-            item = GenericItem(
+
+            item = RedditItem(
                 url=entry['link'], 
                 published_date=published_datetime,
                 author=entry.get('author', ''),
                 title=entry.get('title', ''),
                 description=entry.get('description', ''),
-                image=entry.get('media', {}).get('url')  # Image location can vary by feed, adjust as necessary
+                image=entry.get('media', {}).get('url')
             )
             items.append(item)
         return items
