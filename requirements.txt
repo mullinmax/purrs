@@ -5,3 +5,6 @@ ruff
 sqlalchemy
 python-dateutil
 flask
+flask-cors
+previewlink
+APScheduler

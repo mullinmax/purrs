@@ -45,14 +45,18 @@ docker build -t purrs .
  - [x] ingest data from > 1 subreddit
  - [x] setup db schema
  - [x] save data into sqlite
- - [ ] basic deduplicate data
- - [ ] web ui display text items
+ - [ ] deduplicate data by URL
+ - [x] web ui display text and image items
+ - [ ] page for viewing existing feeds
+ - [ ] allow adding, remoing and editing feeds
+ - [ ] automatic feed type detection (reddit url -> RedditFeed class)
+ - [ ] RedditFeed cleans up image selection & description
  - [ ] web ui like/dislike buttons write to db
- - [ ] web ui shows more item types
  - [ ] make MD representations of items
  - [ ] embed all test representations and save to db
  - [ ] model training?
- - [ ] expand this todo list
+ - [ ] video previews
+ 
 
 
 ## System Design
