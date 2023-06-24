@@ -1,29 +1,57 @@
-# app.py
+import threading
+import time
 
-from flask import Flask, render_template
-from sqlalchemy import create_engine
+from flask import Flask, jsonify, request, render_template
+from flask_cors import CORS
+from apscheduler.schedulers.background import BackgroundScheduler
+
 from sqlalchemy.orm import sessionmaker
-from src.database.base import Base  # Import the shared Base object
-from src.database.FeedItem import FeedItem  # This must come after importing Base
-from src.ingest.RSSFeed import RSSFeed
+from sqlalchemy import create_engine
 
-app = Flask(__name__)
+from src.database.base import Base
+from src.database.item import ItemModel
 
-engine = create_engine('sqlite:///rss.sqlite')
+from src.task.read_feeds import read_feeds
+from src.item.generic import GenericItem
+
+app = Flask(__name__, static_url_path='')
+CORS(app)
+
+DATABASE = 'purrs.sqlite'
+
+
+engine = create_engine('sqlite:///purrs.sqlite')
 Session = sessionmaker(bind=engine)
-session = Session()
 
-@app.route("/")
-def home():
-    feed = RSSFeed('https://www.reddit.com/r/d100/.rss')
-    items = feed.get_items()
+# Create tables.
+Base.metadata.create_all(engine)
 
-    for item in items:  # Make sure to add items one by one, not the entire list
-        session.add(item)
-    session.commit()
+background_tasks = [
+    read_feeds
+    # get_text_representations
+    # get_embeddings
+    # train_ml_model
+    # score_items
+]
 
-    return render_template('index.html', items=items)
+
+def background_job():
+    while True:
+        for task in background_tasks:
+            with Session() as session:
+                task(session)
+        time.sleep(3600) # wait one hour
+
+thread = threading.Thread(target=background_job)
+# thread.start()
+
+@app.route('/')
+def index():
+    with Session() as session:
+        # query database for items
+        items = session.query(ItemModel).all()
+    return render_template('index.html', previews=items, base_url='https://codehost.doze.dev')
+
 
 if __name__ == "__main__":
-    app.run(host='0.0.0.0', port=5000, debug=True)
-
+    app.run(host='0.0.0.0', port=5000, debug=False)

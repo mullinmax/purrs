@@ -1,22 +1,249 @@
-<!-- templates/index.html -->
-
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>RSS Feed</title>
+  <meta charset="utf-8">
+  <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <title>Purrs</title>
+  <style>
+    body {
+      background: #2c3e50;
+      color: #ecf0f1;
+      font-family: 'Open Sans', sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+
+    .grid {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px;
+    }
+
+    .preview {
+      display: flex;
+      background: #34495e;
+      border-radius: 5px;
+      padding: 15px;
+      margin: 10px;
+      width: 80%;
+      box-shadow: 0 4px 6px 0 hsla(0, 0%, 0%, 0.2);
+      transition: box-shadow 0.2s ease-in-out;
+    }
+
+    .preview:hover {
+      box-shadow: 0 8px 12px 0 hsla(0, 0%, 0%, 0.4);
+    }
+
+    .btn-group {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      margin-right: 10px;
+    }
+
+    .btn-group .material-icons {
+      cursor: pointer;
+      color: #bdc3c7;
+    }
+
+    .btn-group .material-icons:hover {
+      color: #ecf0f1;
+    }
+
+    .btn-group .material-icons.selected {
+      color: #2ecc71;
+    }
+
+    .preview img {
+      width: 100px;
+      height: 100px;
+      object-fit: cover;
+      border-radius: 5px;
+      margin-right: 10px;
+      align-self: center;
+      cursor: pointer;
+    }
+
+    .content {
+      flex-grow: 1;
+      border-left: 1px solid #bdc3c7;
+      padding-left: 10px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .text-content {
+      word-wrap: break-word;
+      overflow-wrap: anywhere;
+      margin-top: 10px;
+    }
+
+    .text-content h2 {
+      margin: 0;
+      font-size: 18px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .text-content .short-url,
+    .text-content .published-date,
+    .text-content .author {
+      margin: 5px 0;
+      font-size: 12px;
+      color: #7f8c8d;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .text-content .description {
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    @media (max-width: 600px) {
+      .preview {
+        flex-direction: column;
+      }
+
+      .btn-group {
+        flex-direction: row;
+        margin-right: 0;
+        margin-bottom: 10px;
+      }
+
+      .preview img {
+        align-self: unset;
+        margin-right: 0;
+        margin-bottom: 10px;
+      }
+    }
+
+    .popup-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: rgba(0, 0, 0, 0.8);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+      visibility: hidden;
+      opacity: 0;
+      transition: opacity 0.3s ease-in-out;
+    }
+
+    .popup-overlay.show {
+      visibility: visible;
+      opacity: 1;
+    }
+
+    .popup-content {
+      max-width: 90%;
+      max-height: 90%;
+    }
+
+    .popup-content img {
+      width: 100%;
+      height: auto;
+    }
+
+    /* Additional styles for the link */
+    a.link-style {
+      text-decoration: none;
+      color: inherit;
+    }
+
+    .details {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+    }
+
+    .details p {
+      margin: 0 20px;
+      position: relative;
+      padding-right: 10px;
+    }
+
+    .details p:not(:last-child)::after {
+      content: "";
+      position: absolute;
+      right: 0;
+      top: 50%;
+      transform: translateY(-50%);
+      border-right: 1px solid #7f8c8d;
+    }
+  </style>
+  <script>
+    function sendRating(id, rating, event) {
+      event.stopPropagation();
+      fetch('/rate', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ id: id, rating: rating }),
+      });
+
+      const btnGroup = event.target.parentElement;
+      Array.from(btnGroup.children).forEach((btn) => {
+        btn.classList.remove('selected');
+      });
+      event.target.classList.add('selected');
+    }
+
+    function openImagePopup(imageUrl) {
+      const overlay = document.getElementById('popup-overlay');
+      const popupImage = document.getElementById('popup-image');
+      popupImage.src = imageUrl;
+      overlay.classList.add('show');
+    }
+
+    function closeImagePopup() {
+      const overlay = document.getElementById('popup-overlay');
+      overlay.classList.remove('show');
+    }
+  </script>
 </head>
 <body>
-    <h1>RSS Feed</h1>
-    <ul>
-        {% for item in items %}
-        <li>
-            <h2>{{ item.title }}</h2>
-            <p>Published at: {{ item.published }}</p>
-            <p>Author: {{ item.author }}</p>
-            <p><a href="{{ item.link }}">Read more</a></p>
-        </li>
-        {% endfor %}
-    </ul>
+  <h1>Purrs</h1>
+  <div class="grid">
+    {% for preview in previews %}
+    <div class="preview">
+      <div class="btn-group">
+        <i class="material-icons" onclick="sendRating({{preview.id}}, 'like', event)">expand_less</i>
+        <i class="material-icons" onclick="sendRating({{preview.id}}, 'neutral', event)">panorama_fish_eye</i>
+        <i class="material-icons" onclick="sendRating({{preview.id}}, 'dislike', event)">expand_more</i>
+      </div>
+      <img src="{{ preview.image }}" alt="{{ preview.title }}" onclick="openImagePopup('{{ preview.image }}')" />
+      <div class="content">
+        <a href="{{ preview.url }}" class="link-style">
+          <div class="text-content">
+            <h2>{{ preview.title }}</h2>
+            <div class="details">
+              <p class="short-url">{{ preview.short_url }}</p>
+              <p class="published-date">{{ preview.published_date.strftime('%B %d, %Y') }}</p>
+              <p class="author">{{ preview.author }}</p>
+            </div>
+            <p class="description">{{ preview.description }}</p>
+          </div>
+        </a>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+  <div id="popup-overlay" class="popup-overlay" onclick="closeImagePopup()">
+    <div class="popup-content">
+      <img id="popup-image" src="" alt="Preview Image" />
+    </div>
+  </div>
 </body>
 </html>
