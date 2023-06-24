@@ -2,34 +2,145 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <title>Link Previews</title>
+  <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <title>Purrs</title>
   <style>
+    body {
+      background: #2c3e50;
+      color: #ecf0f1;
+      font-family: 'Open Sans', sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+
     .grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-      grid-gap: 1em;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px;
     }
+
     .preview {
-      border: 1px solid #ccc;
-      padding: 1em;
-      box-shadow: 1px 1px 3px rgba(0, 0, 0, .2);
+      display: flex;
+      background: #34495e;
+      border-radius: 5px;
+      padding: 15px;
+      margin: 10px;
+      width: 80%;
+      box-shadow: 0 4px 6px 0 hsla(0, 0%, 0%, 0.2);
+      transition: all 0.3s ease-in-out;
     }
+
+    .preview:hover {
+      transform: translateY(-10px);
+    }
+
+    .btn-group {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      margin-right: 10px;
+    }
+
+    .btn-group .material-icons {
+      cursor: pointer;
+      color: #bdc3c7;
+    }
+
+    .btn-group .material-icons:hover {
+      color: #ecf0f1;
+    }
+
+    .btn-group .material-icons.selected {
+      color: #2ecc71;
+    }
+
     .preview img {
-      max-width: 100%;
-      height: auto;
+      width: 100px;
+      height: 100px;
+      object-fit: cover;
+      border-radius: 5px;
+      margin-right: 10px;
+      align-self: center;
+    }
+
+    .content {
+      flex-grow: 1;
+      border-left: 1px solid #bdc3c7;
+      padding-left: 10px;
+    }
+
+    .text-content {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      word-wrap: break-word;
+      overflow-wrap: anywhere;
+    }
+
+    .text-content h2 {
+      margin: 0;
+      font-size: 18px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .text-content .short-url {
+      margin: 5px 0;
+      font-size: 12px;
+      color: #7f8c8d;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .text-content .description {
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
   </style>
+  <script>
+    function sendRating(id, rating, event) {
+      event.stopPropagation();  // prevent event from propagating to parent
+      fetch('/rate', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ id: id, rating: rating }),
+      });
+
+      const btnGroup = event.target.parentElement;
+      Array.from(btnGroup.children).forEach((btn) => {
+        btn.classList.remove('selected');
+      });
+      event.target.classList.add('selected');
+    }
+  </script>
 </head>
 <body>
   <h1>Link Previews</h1>
   <div class="grid">
     {% for preview in previews %}
       <div class="preview">
-        <h2><a href="{{ preview['url'] }}">{{ preview['title'] }}</a></h2>
-        <p>{{ preview['description'] }}</p>
-        {% if preview['image'] != 'No image found' %}
-          <img src="{{ preview['image'] }}" alt="{{ preview['title'] }}" />
-        {% endif %}
+        <div class="btn-group">
+          <i class="material-icons" onclick="sendRating({{preview.id}}, 'like', event)">expand_less</i>
+          <i class="material-icons" onclick="sendRating({{preview.id}}, 'neutral', event)">panorama_fish_eye</i>
+          <i class="material-icons" onclick="sendRating({{preview.id}}, 'dislike', event)">expand_more</i>
+        </div>
+        <img src="{{ preview.image }}" alt="{{ preview.title }}" />
+        <div class="content">
+          <a href="{{ preview.url }}" style="text-decoration: none; color: inherit;">
+            <div class="text-content">
+              <h2>{{ preview.title }}</h2>
+              <p class="short-url">{{ preview.short_url }}</p>
+              <p class="description">{{ preview.description }}</p>
+            </div>
+          </a>
+        </div>
       </div>
     {% endfor %}
   </div>

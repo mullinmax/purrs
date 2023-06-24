@@ -9,6 +9,7 @@ from sqlalchemy.orm import sessionmaker
 from sqlalchemy import create_engine
 
 from src.database.base import Base
+from src.database.item import ItemModel
 
 from src.task.read_feeds import read_feeds
 from src.item.generic import GenericItem
@@ -44,17 +45,12 @@ def background_job():
 thread = threading.Thread(target=background_job)
 thread.start()
 
-websites = [
-    GenericItem('https://www.google.com'),
-    GenericItem('https://www.youtube.com/watch?v=btN_ge9S9No'),
-    GenericItem("https://www.youtube.com/watch?v=Kd9W-t0sy4s"),
-    GenericItem("https://www.reddit.com/r/pics/comments/14gkznm/hide_your_mothers_john_oliver_is_back_in_town/")
-]
-
 @app.route('/')
 def index():
-    # query database for items with highest score
-    return render_template('index.html', previews=websites, base_url='https://codehost.doze.dev')
+    with Session() as session:
+        # query database for items
+        items = session.query(ItemModel).all()
+    return render_template('index.html', previews=items, base_url='https://codehost.doze.dev')
 
 
 if __name__ == "__main__":
