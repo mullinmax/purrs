@@ -1,6 +1,7 @@
 import re
+from src.item.generic import GenericItem
 
-class RedditItem(URLItem):
+class RedditItem(GenericItem):
     def get_short_url(self):
         reddit_match = re.search(r'reddit\.com(/r/\w+|/u/\w+)', self.url)
         

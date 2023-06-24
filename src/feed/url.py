@@ -1,6 +1,6 @@
 from previewlink import preview_link
 
-class URLSource():
+class URLFeed():
     def __init__(self, url):
         self.url = url
     

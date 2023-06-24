@@ -46,7 +46,7 @@ docker build -t purrs .
  - [x] setup db schema
  - [x] save data into sqlite
  - [ ] basic deduplicate data
- - [ ] web ui display text items
+ - [x] web ui display text items
  - [ ] web ui like/dislike buttons write to db
  - [ ] web ui shows more item types
  - [ ] make MD representations of items
