@@ -29,11 +29,11 @@
       margin: 10px;
       width: 80%;
       box-shadow: 0 4px 6px 0 hsla(0, 0%, 0%, 0.2);
-      transition: box-shadow 0.2s ease-in-out; /* Modified hover effect */
+      transition: box-shadow 0.2s ease-in-out;
     }
 
     .preview:hover {
-      box-shadow: 0 8px 12px 0 hsla(0, 0%, 0%, 0.4); /* Modified hover effect */
+      box-shadow: 0 8px 12px 0 hsla(0, 0%, 0%, 0.4);
     }
 
     .btn-group {
@@ -63,7 +63,7 @@
       border-radius: 5px;
       margin-right: 10px;
       align-self: center;
-      cursor: pointer; /* Added cursor style for image */
+      cursor: pointer;
     }
 
     .content {
@@ -78,7 +78,7 @@
     .text-content {
       word-wrap: break-word;
       overflow-wrap: anywhere;
-      margin-top: 10px; /* Modified gap between short_url and description */
+      margin-top: 10px;
     }
 
     .text-content h2 {
@@ -88,7 +88,9 @@
       text-overflow: ellipsis;
     }
 
-    .text-content .short-url {
+    .text-content .short-url,
+    .text-content .published-date,
+    .text-content .author {
       margin: 5px 0;
       font-size: 12px;
       color: #7f8c8d;
@@ -104,7 +106,6 @@
       text-overflow: ellipsis;
     }
 
-    /* Added styles for mobile view */
     @media (max-width: 600px) {
       .preview {
         flex-direction: column;
@@ -123,7 +124,6 @@
       }
     }
 
-    /* Added styles for image popup */
     .popup-overlay {
       position: fixed;
       top: 0;
@@ -154,10 +154,37 @@
       width: 100%;
       height: auto;
     }
+
+    /* Additional styles for the link */
+    a.link-style {
+      text-decoration: none;
+      color: inherit;
+    }
+
+    .details {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+    }
+
+    .details p {
+      margin: 0 20px;
+      position: relative;
+      padding-right: 10px;
+    }
+
+    .details p:not(:last-child)::after {
+      content: "";
+      position: absolute;
+      right: 0;
+      top: 50%;
+      transform: translateY(-50%);
+      border-right: 1px solid #7f8c8d;
+    }
   </style>
   <script>
     function sendRating(id, rating, event) {
-      event.stopPropagation();  // prevent event from propagating to parent
+      event.stopPropagation();
       fetch('/rate', {
         method: 'POST',
         headers: {
@@ -190,27 +217,29 @@
   <h1>Purrs</h1>
   <div class="grid">
     {% for preview in previews %}
-      <div class="preview">
-        <div class="btn-group">
-          <i class="material-icons" onclick="sendRating({{preview.id}}, 'like', event)">expand_less</i>
-          <i class="material-icons" onclick="sendRating({{preview.id}}, 'neutral', event)">panorama_fish_eye</i>
-          <i class="material-icons" onclick="sendRating({{preview.id}}, 'dislike', event)">expand_more</i>
-        </div>
-        <img src="{{ preview.image }}" alt="{{ preview.title }}" onclick="openImagePopup('{{ preview.image }}')" /> <!-- Added onclick event for image popup -->
-        <div class="content">
-          <a href="{{ preview.url }}" style="text-decoration: none; color: inherit;">
-            <div class="text-content">
-              <h2>{{ preview.title }}</h2>
-              <p class="short-url">{{ preview.short_url }}</p>
-              <p class="description">{{ preview.description }}</p>
-            </div>
-          </a>
-        </div>
+    <div class="preview">
+      <div class="btn-group">
+        <i class="material-icons" onclick="sendRating({{preview.id}}, 'like', event)">expand_less</i>
+        <i class="material-icons" onclick="sendRating({{preview.id}}, 'neutral', event)">panorama_fish_eye</i>
+        <i class="material-icons" onclick="sendRating({{preview.id}}, 'dislike', event)">expand_more</i>
       </div>
+      <img src="{{ preview.image }}" alt="{{ preview.title }}" onclick="openImagePopup('{{ preview.image }}')" />
+      <div class="content">
+        <a href="{{ preview.url }}" class="link-style">
+          <div class="text-content">
+            <h2>{{ preview.title }}</h2>
+            <div class="details">
+              <p class="short-url">{{ preview.short_url }}</p>
+              <p class="published-date">{{ preview.published_date.strftime('%B %d, %Y') }}</p>
+              <p class="author">{{ preview.author }}</p>
+            </div>
+            <p class="description">{{ preview.description }}</p>
+          </div>
+        </a>
+      </div>
+    </div>
     {% endfor %}
   </div>
-
-  <!-- Added image popup overlay -->
   <div id="popup-overlay" class="popup-overlay" onclick="closeImagePopup()">
     <div class="popup-content">
       <img id="popup-image" src="" alt="Preview Image" />
