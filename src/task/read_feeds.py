@@ -1,8 +1,10 @@
 from src.feed.rss import RSSFeed
+from src.database.feed import FeedModel
 
 def read_feeds(sqlalchemy_session):
     # load feed configs from database
-    feeds = [RSSFeed("https://www.reddit.com/r/StarWarsSquadrons/.rss")] # we're going to pretend we're loading this from the DB for now
+    feed_configs = sqlalchemy_session.query(FeedModel).all()
+    feeds = [RSSFeed(config.id, config.url, config.last_pulled) for config in feed_configs]
     # for each feed
     for feed in feeds:
         items = feed.get_items()

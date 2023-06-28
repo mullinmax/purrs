@@ -1,12 +1,12 @@
 import feedparser
 from typing import List
-import datetime
+from datetime import datetime
 from dateutil.parser import parse
 
 from src.item.generic import GenericItem
 
 class RSSFeed:
-    def __init__(self, url: str, id:int, last_pulled:) -> None:
+    def __init__(self, url: str, id:int, last_pulled:datetime):
         self.url = url
         self.feed = feedparser.parse(self.url)
 

@@ -1,0 +1,38 @@
+<!-- templates/feeds.html -->
+
+{% extends "layout.html" %}
+
+{% block content %}
+<h1>Feeds</h1>
+
+<form action="/feeds" method="post">
+    <label for="url">Feed URL:</label>
+    <input type="text" id="url" name="url" required>
+    <input type="submit" value="Add Feed">
+</form>
+
+<table>
+    <tr>
+        <th>ID</th>
+        <th>URL</th>
+        <th>Actions</th>
+    </tr>
+    {% for feed in feeds %}
+    <tr>
+        <td>{{ feed.id }}</td>
+        <td>{{ feed.url }}</td>
+        <td>
+            <form action="/feeds/{{ feed.id }}" method="post">
+                <input type="hidden" name="_method" value="PUT">
+                <input type="text" name="url" value="{{ feed.url }}" required>
+                <input type="submit" value="Update">
+            </form>
+            <form action="/feeds/{{ feed.id }}" method="post">
+                <input type="hidden" name="_method" value="DELETE">
+                <input type="submit" value="Delete">
+            </form>
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+{% endblock %}
