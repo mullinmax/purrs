@@ -8,3 +8,5 @@ class FeedModel(Base):
     url = Column(String, unique=True)
     last_pulled = Column(DateTime)
     
+    def to_dict(self):
+        return {c.name: getattr(self, c.name) for c in self.__table__.columns}

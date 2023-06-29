@@ -1,6 +1,7 @@
 feedparser
 feedgenerator
 pytest
+pytest-mock
 ruff
 sqlalchemy
 python-dateutil

@@ -8,6 +8,7 @@ from src.item.generic import GenericItem
 class RSSFeed:
     def __init__(self, url: str, id:int, last_pulled:datetime):
         self.url = url
+        self.id = id
         self.feed = feedparser.parse(self.url)
 
     def get_items(self) -> List[GenericItem]:

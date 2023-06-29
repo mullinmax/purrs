@@ -16,12 +16,12 @@ def create_feed():
     with get_db_session() as session:
         data = request.get_json()
         new_feed = FeedModel(
-            url=data['url'],
-            last_pulled=datetime.now()
+            url=data['url']
         )
         session.add(new_feed)
         session.commit()
-    return jsonify(new_feed.__dict__), 201
+        new_feed_dict = new_feed.to_dict()
+    return jsonify(new_feed_dict), 201
 
 @feed_blueprint.route('/feeds/<int:id>', methods=['PUT'])
 def update_feed(id):
@@ -31,7 +31,7 @@ def update_feed(id):
         if feed:
             feed.url = data.get('url', feed.url)
             session.commit()
-            return jsonify(feed.__dict__), 200
+            return jsonify(feed.to_dict()), 200
         else:
             return jsonify({'error': 'Feed not found'}), 404
 

@@ -1,38 +1,97 @@
-<!-- templates/feeds.html -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Manage Feeds</title>
+    <style>
+        body {
+        background-color: #2b2b2b;
+        color: #e1e1e1;
+        font-family: Arial, sans-serif;
+    }
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+    }
+    th, td {
+        border: 1px solid #444;
+        padding: 10px;
+        text-align: left;
+    }
+    th {
+        background-color: #444;
+        color: #fff;
+    }
+    tr:nth-child(even) {
+        background-color: #3a3a3a;
+    }
+    form {
+        margin-bottom: 20px;
+    }
+    input[type="text"] {
+        padding: 5px;
+        border-radius: 3px;
+        border: 1px solid #444;
+        background-color: #3a3a3a;
+        color: #fff;
+    }
+    input[type="submit"] {
+        padding: 5px 10px;
+        border-radius: 3px;
+        border: 1px solid #444;
+        background-color: #444;
+        color: #fff;
+        cursor: pointer;
+    }
+    input[type="submit"]:hover {
+        background-color: #555;
+    }
+    label {
+        margin-right: 10px;
+    }
+    </style>
+</head>
+<body>
+    <h1>Manage Feeds</h1>
 
-{% extends "html/layout.jinja" %}
+    <!-- Create Feed -->
+    <form id="create-feed-form">
+        <label for="new-url">New Feed URL:</label>
+        <input type="text" id="new-url" name="url">
+        <input type="submit" value="Add Feed">
+    </form>
 
-{% block content %}
-<h1>Feeds</h1>
 
-<form action="/feeds" method="post">
-    <label for="url">Feed URL:</label>
-    <input type="text" id="url" name="url" required>
-    <input type="submit" value="Add Feed">
-</form>
+    <!-- Feed Table -->
+    <table>
+        <tr>
+            <th>ID</th>
+            <th>URL</th>
+            <th>Last Pulled</th>
+            <th>Actions</th>
+        </tr>
+        {% for feed in feeds %}
+            <tr>
+                <td>{{ feed.id }}</td>
+                <td>{{ feed.url }}</td>
+                <td>{{ feed.last_pulled }}</td>
+                <td>
+                    <!-- Update Feed -->
+                    <form class="update-feed-form" data-id="{{ feed.id }}">
+                        <label for="url-{{ feed.id }}">Update URL:</label>
+                        <input type="text" id="url-{{ feed.id }}" name="url" value="{{ feed.url }}">
+                        <input type="submit" value="Update Feed">
+                    </form>
+                    <!-- Delete Feed -->
+                    <form class="delete-feed-form" data-id="{{ feed.id }}">
+                        <input type="submit" value="Delete Feed">
+                    </form>
+                </td>
+            </tr>
+        {% endfor %}
+    </table>
 
-<table>
-    <tr>
-        <th>ID</th>
-        <th>URL</th>
-        <th>Actions</th>
-    </tr>
-    {% for feed in feeds %}
-    <tr>
-        <td>{{ feed.id }}</td>
-        <td>{{ feed.url }}</td>
-        <td>
-            <form action="/feeds/{{ feed.id }}" method="post">
-                <input type="hidden" name="_method" value="PUT">
-                <input type="text" name="url" value="{{ feed.url }}" required>
-                <input type="submit" value="Update">
-            </form>
-            <form action="/feeds/{{ feed.id }}" method="post">
-                <input type="hidden" name="_method" value="DELETE">
-                <input type="submit" value="Delete">
-            </form>
-        </td>
-    </tr>
-    {% endfor %}
-</table>
-{% endblock %}
+    <!-- Include your JavaScript file here -->
+    <script src="{{ url_for('static', filename='js/feed.js') }}"></script>
+</body>
+</html>
