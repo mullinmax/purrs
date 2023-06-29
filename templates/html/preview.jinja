@@ -1,0 +1,21 @@
+<div class="preview">
+  <div class="btn-group">
+    <i class="material-icons" onclick="sendRating({{preview.id}}, 'like', event)">expand_less</i>
+    <i class="material-icons" onclick="sendRating({{preview.id}}, 'neutral', event)">panorama_fish_eye</i>
+    <i class="material-icons" onclick="sendRating({{preview.id}}, 'dislike', event)">expand_more</i>
+  </div>
+  <img src="{{ preview.image }}" alt="{{ preview.title }}" onclick="openImagePopup('{{ preview.image }}')" />
+  <div class="content">
+    <a href="{{ preview.url }}" class="link-style">
+      <div class="text-content">
+        <h2>{{ preview.title }}</h2>
+        <div class="details">
+          <p class="short-url">{{ preview.short_url }}</p>
+          <p class="published-date">{{ preview.published_date.strftime('%B %d, %Y') }}</p>
+          <p class="author">{{ preview.author }}</p>
+        </div>
+        <p class="description">{{ preview.description }}</p>
+      </div>
+    </a>
+  </div>
+</div>

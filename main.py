@@ -10,6 +10,8 @@ from src.database.base import Base
 from src.database.item import ItemModel
 from src.task.read_feeds import read_feeds
 from src.routes.feed import feed_blueprint
+from src.routes.page import page_blueprint
+from src.routes.theme import theme_blueprint
 
 app = Flask(__name__, static_url_path='')
 CORS(app)
@@ -33,20 +35,15 @@ background_tasks = [
 def background_job():
     while True:
         for task in background_tasks:
-            with Session() as session:
-                task(session)
+            task()
         time.sleep(3600)  # Wait one hour
 
 thread = threading.Thread(target=background_job)
 thread.start()
 
 app.register_blueprint(feed_blueprint)
-
-@app.route('/')
-def index():
-    with Session() as session:
-        items = session.query(ItemModel).all()
-    return render_template('index.jinja', previews=items, base_url='https://codehost.doze.dev')
+app.register_blueprint(page_blueprint)
+app.register_blueprint(theme_blueprint)
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=5000, debug=False)

@@ -1,0 +1,22 @@
+{% extends "html/base.jinja" %}
+
+{% block title %}
+  Purrs
+{% endblock %}
+
+{% block heading %}
+  Purrs
+{% endblock %}
+
+{% block content %}
+  <div class="grid">
+    {% for preview in previews %}
+      {% include 'html/preview.jinja' %}
+    {% endfor %}
+  </div>
+  <div id="popup-overlay" class="popup-overlay" onclick="closeImagePopup()">
+    <div class="popup-content">
+      <img id="popup-image" src="" alt="Preview Image" />
+    </div>
+  </div>
+{% endblock %}
