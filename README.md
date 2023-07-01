@@ -52,9 +52,10 @@ docker build -t purrs .
  - [x] page for viewing existing feeds
  - [x] flask route for removing feed
  - [x] page button for deleting feeds
- - [ ] only ead feeds if they haven't been recently
+ - [ ] only read feeds if they haven't been recently
  - [ ] automatic feed type detection (reddit url -> RedditFeed class)
  - [ ] RedditFeed cleans up image selection & description
+ - [x] Authentication
  - [ ] web ui like/dislike buttons write to db
  - [ ] make MD representations of items
  - [ ] embed all test representations and save to db
