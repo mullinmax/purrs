@@ -1,11 +1,19 @@
 from src.feed.rss import RSSFeed
+from src.database.feed import FeedModel
+from src.database.session import get_db_session
 
-def read_feeds(sqlalchemy_session):
-    # load feed configs from database
-    feeds = [RSSFeed("https://www.reddit.com/r/StarWarsSquadrons/.rss")] # we're going to pretend we're loading this from the DB for now
-    # for each feed
-    for feed in feeds:
-        items = feed.get_items()
-        for item in items:
-            item.save_to_db(sqlalchemy_session)
-    
+def load_feed_configs():
+    with get_db_session() as session:
+        feed_configs = session.query(FeedModel).all()
+    return feed_configs
+
+def create_feeds_from_configs(feed_configs):
+    return [RSSFeed(config.url, config.id, config.last_pulled) for config in feed_configs]
+
+def read_feeds():
+    print('reading feeds')
+    feed_configs = load_feed_configs()
+    feeds = create_feeds_from_configs(feed_configs)
+    with get_db_session() as session:
+        for feed in feeds:
+            feed.save_items_to_db(session)

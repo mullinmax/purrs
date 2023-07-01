@@ -1,0 +1,58 @@
+{% extends "html/base.jinja" %}
+
+{% block title %}
+  Purrs
+{% endblock %}
+
+
+{% block content %}
+  <div class="grid">
+    {% for preview in previews %}
+      {% include 'html/preview.jinja' %}
+    {% endfor %}
+  </div>
+  <div id="imagePopup" onclick="closeImagePopup()"></div>
+  <script>
+    function openImagePopup(imageSrc) {
+  var popupDiv = document.getElementById("imagePopup");
+
+  // Clear any existing image
+  while (popupDiv.firstChild) {
+    popupDiv.firstChild.remove();
+  }
+
+  // Create new img element and set its src to imageSrc
+  var img = document.createElement("img");
+  img.src = imageSrc;
+
+  // Append the img to the popup div
+  popupDiv.appendChild(img);
+
+  // Show the popup
+  popupDiv.style.display = "block";
+  
+  // Fade in the popup and grow the image
+  setTimeout(function(){
+    popupDiv.style.opacity = "1";
+    img.style.display = "block";
+    img.style.transform = "scale(1)";
+  }, 100);
+}
+
+function closeImagePopup() {
+  var popupDiv = document.getElementById("imagePopup");
+  var img = popupDiv.querySelector("img");
+  
+  // Fade out the popup and shrink the image
+  popupDiv.style.opacity = "0";
+  img.style.transform = "scale(0.95)";
+  
+  setTimeout(function(){
+    // Hide the popup after the transition
+    popupDiv.style.display = "none";
+    img.style.display = "none";
+  }, 300);
+}
+
+  </script>
+{% endblock %}
