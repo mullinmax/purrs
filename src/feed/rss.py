@@ -6,10 +6,16 @@ from dateutil.parser import parse
 from src.item.generic import GenericItem
 
 class RSSFeed:
-    def __init__(self, url: str, id:int, last_pulled:datetime):
+    def __init__(self, url: str, id: int, last_pulled: datetime):
         self.url = url
         self.id = id
-        self.feed = feedparser.parse(self.url)
+        self._feed = None
+
+    @property
+    def feed(self):
+        if self._feed is None:
+            self._feed = feedparser.parse(self.url)
+        return self._feed
 
     def get_items(self) -> List[GenericItem]:
         items = []
@@ -20,7 +26,7 @@ class RSSFeed:
                 print(f"Warning: could not parse date: {entry['published']}")
                 published_datetime = None
             item = GenericItem(
-                url=entry['link'], 
+                url=entry['link'],
                 published_date=published_datetime,
                 author=entry.get('author', ''),
                 title=entry.get('title', ''),
@@ -29,3 +35,8 @@ class RSSFeed:
             )
             items.append(item)
         return items
+
+    def save_items_to_db(self, session):
+        items = self.get_items()
+        for item in items:
+            item.save_to_db(session)
