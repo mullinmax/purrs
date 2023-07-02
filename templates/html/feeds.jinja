@@ -13,9 +13,10 @@
     <form id="create-feed-form">
         <label for="new-url">New Feed URL:</label>
         <input type="text" id="new-url" name="url">
+        <label for="cron-expression">Cron Expression:</label>
+        <input type="text" id="cron-expression" name="cron_expression">
         <input type="submit" value="Add Feed">
     </form>
-
 
     <!-- Feed Table -->
     <table>
@@ -23,6 +24,7 @@
             <th>ID</th>
             <th>URL</th>
             <th>Last Pulled</th>
+            <th>Cron Expression</th>
             <th>Actions</th>
         </tr>
         {% for feed in feeds %}
@@ -30,11 +32,14 @@
                 <td>{{ feed.id }}</td>
                 <td>{{ feed.url }}</td>
                 <td>{{ feed.last_pulled }}</td>
+                <td>{{ feed.cron_expression }}</td>
                 <td>
                     <!-- Update Feed -->
                     <form class="update-feed-form" data-id="{{ feed.id }}">
                         <label for="url-{{ feed.id }}">Update URL:</label>
                         <input type="text" id="url-{{ feed.id }}" name="url" value="{{ feed.url }}">
+                        <label for="cron-{{ feed.id }}">Cron Expression:</label>
+                        <input type="text" id="cron-{{ feed.id }}" name="cron_expression" value="{{ feed.cron_expression }}">
                         <input type="submit" value="Update Feed">
                     </form>
                     <!-- Delete Feed -->

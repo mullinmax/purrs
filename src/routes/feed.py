@@ -5,7 +5,6 @@ from datetime import datetime
 from src.database.feed import FeedModel
 from src.database.session import get_db_session
 
-
 feed_blueprint = Blueprint('feed', __name__)
 
 @feed_blueprint.route('/feeds', methods=['GET'])
@@ -13,7 +12,7 @@ feed_blueprint = Blueprint('feed', __name__)
 def get_feeds():
     with get_db_session() as session:
         feeds = session.query(FeedModel).all()
-    return jsonify([feed.__dict__ for feed in feeds]), 200
+    return jsonify([feed.to_dict() for feed in feeds]), 200
 
 @feed_blueprint.route('/feeds', methods=['POST'])
 @login_required
@@ -21,7 +20,8 @@ def create_feed():
     with get_db_session() as session:
         data = request.get_json()
         new_feed = FeedModel(
-            url=data['url']
+            url=data['url'],
+            cron_expression=data['cron_expression']
         )
         session.add(new_feed)
         session.commit()
@@ -36,6 +36,7 @@ def update_feed(id):
         feed = session.query(FeedModel).filter(FeedModel.id == id).first()
         if feed:
             feed.url = data.get('url', feed.url)
+            feed.cron_expression = data.get('cron_expression', feed.cron_expression)
             session.commit()
             return jsonify(feed.to_dict()), 200
         else:

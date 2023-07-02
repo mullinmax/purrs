@@ -9,3 +9,4 @@ flask-login
 python-dotenv
 previewlink
 waitress
+croniter

@@ -7,6 +7,7 @@ class FeedModel(Base):
     id = Column(Integer, primary_key=True)
     url = Column(String, unique=True)
     last_pulled = Column(DateTime)
+    cron_expression = Column(String)
     
     def to_dict(self):
         return {c.name: getattr(self, c.name) for c in self.__table__.columns}
