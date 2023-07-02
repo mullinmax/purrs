@@ -1,10 +1,12 @@
 feedparser
-feedgenerator
 pytest
-ruff
+pytest-mock
 sqlalchemy
 python-dateutil
+python-dotenv
 flask
 flask-cors
+flask-login
 previewlink
-APScheduler
+waitress
+croniter

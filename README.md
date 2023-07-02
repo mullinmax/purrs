@@ -39,23 +39,56 @@ To build the Docker image, run the following command:
 docker build -t purrs .
 ```
 
+## Running Purrs
+
+Docker run
+
+```bash
+docker run -e SECRET_KEY=your_secret_key -e ADMIN_PASSWORD=your_admin_password -p 5000:5000 your_image_name
+```
+
+Docker Compose
+
+```bash
+version: "3.8"
+services:
+  web:
+    build: .
+    ports:
+      - "5000:5000"
+    environment:
+      - SECRET_KEY=your_secret_key
+      - ADMIN_PASSWORD=your_admin_password
+```
+
 ## TODO (roughly in order)
 
  - [x] setup build pipeline
  - [x] ingest data from > 1 subreddit
  - [x] setup db schema
  - [x] save data into sqlite
- - [ ] deduplicate data by URL
+ - [x] deduplicate data by URL
  - [x] web ui display text and image items
- - [ ] page for viewing existing feeds
- - [ ] allow adding, remoing and editing feeds
+ - [x] save and load feeds from DB
+ - [x] flask route for reading feed
+ - [x] page for viewing existing feeds
+ - [x] flask route for removing feed
+ - [x] page button for deleting feeds
+ - [x] Authentication
+ - [x] Logout button
+ - [x] only read feeds if they haven't been recently
+ - [x] fix dockerfile to build correctly
+ - [ ] move database into config dir 
+ - [ ] auth tests
  - [ ] automatic feed type detection (reddit url -> RedditFeed class)
  - [ ] RedditFeed cleans up image selection & description
  - [ ] web ui like/dislike buttons write to db
+ - [ ] add useful logging
  - [ ] make MD representations of items
  - [ ] embed all test representations and save to db
  - [ ] model training?
  - [ ] video previews
+ - [ ] release (once I find myself getting distracted by the feed and not it's bugs/missing features)
  
 
 
