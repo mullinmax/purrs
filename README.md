@@ -83,6 +83,7 @@ services:
  - [ ] automatic feed type detection (reddit url -> RedditFeed class)
  - [ ] RedditFeed cleans up image selection & description
  - [ ] web ui like/dislike buttons write to db
+ - [ ] add useful logging
  - [ ] make MD representations of items
  - [ ] embed all test representations and save to db
  - [ ] model training?

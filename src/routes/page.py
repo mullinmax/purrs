@@ -20,4 +20,4 @@ def manage_feeds():
 def index():
     with get_db_session() as session:
         items = session.query(ItemModel).all()
-    return render_template('html/index.jinja', previews=items, base_url='https://codehost.doze.dev')
+    return render_template('html/index.jinja', previews=items)
