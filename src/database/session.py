@@ -19,6 +19,7 @@ def create_admin_user():
     
     password = Config.ADMIN_PASSWORD
     username = 'admin'
+    print(password)
     # Only create an admin if username and password are both set
     if username and password:
         admin = session.query(User).filter_by(username=username).first()
