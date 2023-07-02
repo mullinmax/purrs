@@ -29,7 +29,7 @@ init_db()
 # backgorund tasks
 #
 background_tasks = [
-    # read_feeds,
+    read_feeds,
     # Uncomment the following tasks when they're ready to be used
     # get_text_representations,
     # get_embeddings,
@@ -41,7 +41,7 @@ def background_job():
     while True:
         for task in background_tasks:
             task()
-        time.sleep(3600)  # Wait one hour
+        time.sleep(60) # run once per minute
 
 thread = threading.Thread(target=background_job)
 thread.start()
