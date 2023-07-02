@@ -77,7 +77,8 @@ services:
  - [x] Authentication
  - [x] Logout button
  - [x] only read feeds if they haven't been recently
- - [ ] fix dockerfile to build correctly
+ - [x] fix dockerfile to build correctly
+ - [ ] move database into config dir 
  - [ ] auth tests
  - [ ] automatic feed type detection (reddit url -> RedditFeed class)
  - [ ] RedditFeed cleans up image selection & description

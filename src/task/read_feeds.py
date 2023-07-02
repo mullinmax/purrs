@@ -16,6 +16,4 @@ def read_feeds():
     feed_configs = load_feed_configs()
     feeds = create_feeds_from_configs(feed_configs)
     for feed in feeds:
-        # Only update the feed if the last pull time + pull interval is earlier than the current time
-        if feed.last_pulled is None or feed.last_pulled + timedelta(seconds=feed.pull_every_n_seconds) < datetime.now():
-            feed.save_items_to_db()
+        feed.save_items_to_db()
