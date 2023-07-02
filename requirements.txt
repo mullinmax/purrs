@@ -6,7 +6,6 @@ python-dateutil
 flask
 flask-cors
 flask-login
-python-dotenv
 previewlink
 waitress
 croniter

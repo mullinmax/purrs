@@ -39,6 +39,28 @@ To build the Docker image, run the following command:
 docker build -t purrs .
 ```
 
+## Running Purrs
+
+Docker run
+
+```bash
+docker run -e SECRET_KEY=your_secret_key -e ADMIN_PASSWORD=your_admin_password -p 5000:5000 your_image_name
+```
+
+Docker Compose
+
+```bash
+version: "3.8"
+services:
+  web:
+    build: .
+    ports:
+      - "5000:5000"
+    environment:
+      - SECRET_KEY=your_secret_key
+      - ADMIN_PASSWORD=your_admin_password
+```
+
 ## TODO (roughly in order)
 
  - [x] setup build pipeline
