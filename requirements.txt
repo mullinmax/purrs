@@ -3,6 +3,7 @@ pytest
 pytest-mock
 sqlalchemy
 python-dateutil
+python-dotenv
 flask
 flask-cors
 flask-login

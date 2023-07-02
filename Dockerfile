@@ -7,6 +7,9 @@ WORKDIR /app
 # Add the current directory contents into the container at /app
 ADD . /app
 
+# Copy the .env file into the container
+COPY .env .env
+
 # Set the Python path to include /app so it includes src and tests
 ENV PYTHONPATH=/app
 
@@ -17,4 +20,5 @@ RUN pip install --no-cache-dir -r requirements.txt
 RUN python -c "from src.database.session import init_db; init_db()"
 
 # Run the flask app
-CMD ["python", "-m", "waitress", "-b", "0.0.0.0:5000", "main:app"]
+CMD ["waitress-serve", "--host=0.0.0.0", "--port=5000", "main:app"]
+
