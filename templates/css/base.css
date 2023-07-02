@@ -200,3 +200,87 @@ a.link-style {
   object-fit: contain;
   transition: transform 0.1s ease-in-out;
 }
+
+body {
+  background-color: #111;
+  color: #ddd;
+  font-family: 'Open Sans', sans-serif;
+}
+
+header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: #222;
+  padding: 20px;
+  color: #fff;
+}
+
+#title-banner {
+  margin-bottom: 10px;
+}
+
+#navbar {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+#navbar a {
+  color: #ddd;
+  text-decoration: none;
+  margin: 0 10px;
+}
+
+#navbar a:hover {
+  color: #fff;
+}
+
+body {
+  background-color: #2b2b2b;
+  color: #e1e1e1;
+  font-family: Arial, sans-serif;
+}
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+th, td {
+  border: 1px solid #444;
+  padding: 10px;
+  text-align: left;
+}
+th {
+  background-color: #444;
+  color: #fff;
+}
+tr:nth-child(even) {
+  background-color: #3a3a3a;
+}
+form {
+  margin-bottom: 20px;
+}
+
+input[type="text"] {
+  padding: 5px;
+  border-radius: 3px;
+  border: 1px solid #444;
+  background-color: #3a3a3a;
+  color: #fff;
+}
+input[type="submit"] {
+  padding: 5px 10px;
+  border-radius: 3px;
+  border: 1px solid #444;
+  background-color: #444;
+  color: #fff;
+  cursor: pointer;
+}
+input[type="submit"]:hover {
+  background-color: #555;
+}
+label {
+  margin-right: 10px;
+}

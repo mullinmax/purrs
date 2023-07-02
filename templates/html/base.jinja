@@ -2,12 +2,31 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;600&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <title>{% block title %}{% endblock %}</title>
     <link href="/css" rel="stylesheet">
 </head>
 <body>
+    <header>
+        <div id="title-banner">
+            <h1>{% block banner %}{% endblock %}</h1>
+        </div>
+        <nav id="navbar">
+            <div id="menu">
+                <a class="nav-link" href="/">Home</a>
+                <a class="nav-link" href="/config/feeds">Configure Feeds</a>
+            </div>
+            <div id="login-logout">
+                {% if current_user.is_authenticated %}
+                    <a href="{{ url_for('auth.logout') }}">Logout</a>
+                {% else %}
+                    <a href="{{ url_for('auth.login') }}">Login</a>
+                {% endif %}
+            </div>
+        </nav>
+    </header>
     {% block content %}{% endblock %}
 </body>
 </html>
