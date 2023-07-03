@@ -82,6 +82,7 @@ services:
  - [ ] auth tests
  - [ ] automatic feed type detection (reddit url -> RedditFeed class)
  - [ ] RedditFeed cleans up image selection & description
+ - [ ] Switch To using Reddit Api Not rss
  - [ ] web ui like/dislike buttons write to db
  - [ ] add useful logging
  - [ ] make MD representations of items
